@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author patrizio
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class JpaSurveyDAOTest {
 

@@ -27,7 +27,7 @@ import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
 
 /**
  *
- * @author eul0860
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class JcrSurveyDAOTest {
 
