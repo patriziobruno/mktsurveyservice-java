@@ -5,8 +5,6 @@
  */
 package net.dstc.mkts;
 
-import org.jhades.JHades;
-
 /**
  *
  * @author eul0860
@@ -14,8 +12,6 @@ import org.jhades.JHades;
 public class Main {
 
     public static void main(final String[] args) throws Exception {
-        new JHades().dumpClassloaderInfo();
-
         new ServerMainImpl().run();
     }
 }
