@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>test app</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+        <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+        <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/color.css">
+        <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+
+        <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+        <script type="text/javascript" src="http://www.jeasyui.com/easyui/datagrid-detailview.js"></script>
+
+        <script>
+            String.prototype.format = function () {
+                var formatted = this;
+                for (var arg in arguments) {
+                    formatted = formatted.replace("{" + arg + "}", arguments[arg]);
+                }
+                return formatted;
+            };
+
+            $(function () {
+                function getCookie(name) {
+                    var cookies = document.cookie.split(';')
+                            , cookie;
+                    name = name + '=';
+                    for (var i = 0; i < cookies.length; i++) {
+                        cookie = cookies[i];
+                        if (cookie.trim().indexOf(name) === 0) {
+                            return cookie.substring(cookie.indexOf(name) + name.length);
+                        }
+                    }
+                }
+
+                function setCookie(name, value) {
+                    document.cookie = name + '=' + value;
+                }
+
+                function getAccessToken(at) {
+                    var at = window.location.hash
+                            , rv;
+                    if (at.indexOf('access_token=') === 1) {
+                        rv = at.substring(14, at.indexOf('&'));
+                        setCookie('access_token', rv);
+                    } else {
+                        rv = getCookie('access_token');
+                    }
+                    return rv;
+                }
+
+                var token = getAccessToken();
+
+                $.ajaxSetup({
+                    headers: {"Authorization": "Bearer " + token}
+                    , contentType: 'application/json; charset=utf8'
+                    , dataType: 'json'
+                });
+
+                $('#surveyGrid').datagrid({
+                    'loader': function (param, success, error) {
+                        var survey
+                                , title = $('#title').val()
+                                , startDate = $('#startDate').val()
+                                , minAge = $('#minAge').val()
+                                , maxAge = $('#maxAge').val()
+                                , minIncome = $('#minIncome').val()
+                                , maxIncome = $('#maxIncome').val()
+                                , country = $('#country').val();
+
+                        if (startDate)
+                            startDate = new Date(startDate);
+
+                        survey = {
+                            title: title
+                            , startDate: startDate
+                        };
+
+                        if (country) {
+                            survey.target = {
+                                country: country
+                            };
+                        }
+
+                        if (minIncome && maxIncome) {
+                            if (!survey.target) {
+                                survey.target = {};
+                            }
+                            survey.target.incomeRange = [minIncome, maxIncome];
+                        }
+
+                        if (minAge && maxAge) {
+                            if (!survey.target) {
+                                survey.target = {};
+                            }
+                            survey.target.ageRange = [minAge, maxAge];
+                        }
+
+                        $.ajax({
+                            url: '/api/marketing-survey'
+                            , method: 'GET'
+                            , data: {filter: JSON.stringify(survey)}
+                        }).done(function (res) {
+                            success(res);
+                            console.log(res);
+                        }).fail(function (jqxhr, err, statusText) {
+                            if (jqxhr.status === 401) {
+                                window.location.href = '/';
+                            } else {
+                                error(jqxhr, err, statusText);
+                            }
+                        });
+                    }
+                });
+                var options = $('#surveyGrid').datagrid('options');
+//                options.onDblClickCell = function (index, field, value) {
+//                    $(this).datagrid('beginEdit', index);
+//                    var ed = $(this).datagrid('getEditor', {index: index, field: field});
+//                    $(ed.target).focus();
+//                };
+
+                options.view = detailview;
+                options.detailFormatter = function (index, row) {
+                    var value = row.target
+                            , ageRange = value.ageRange && value.ageRange.length === 2 ? value.ageRange : [0, 0]
+                            , incomeRange = value.incomeRange && value.incomeRange.length === 2 ? value.incomeRange : [0, 0]
+                            ;
+                    return '<div class="easyui-panel" title="Target"><b>age range:</b> {0}-{1} / <b>income range:</b> {2}-{3} <br/> <b>gender:</b> {4} / <b>country:</b> {5}</div>'.format(ageRange[0], ageRange[1], incomeRange[0]
+                            , incomeRange[1], value.gender, value.country);
+                };
+                options.onExpandRow = function (index, row) {
+                };
+
+                options.columns[0].forEach(function (c) {
+                    if (c.field === 'startDate') {
+                        c.formatter = function (value) {
+                            return (new Date(value)).toString();
+                        };
+                    } else if (c.field === 'target') {
+                        c.formatter = function (value) {
+                            return 'age range: {0}-{1} / income range: {2}-{3} <br/> gender: {4} / country: {5}'.format(value.ageRange[0], value.ageRange[1], value.incomeRange[0]
+                                    , value.incomeRange[1], value.gender, value.country);
+                        };
+                    }
+                });
+
+                //$('#surveyGrid').datagrid('load');
+
+                $('#searchButton').click(function () {
+                    $('#surveyGrid').datagrid('reload');
+                });
+
+                $('#saveButton').click(function () {
+                    var survey
+                            , title = $('#title').val()
+                            , startDate = $('#startDate').val()
+                            , minAge = $('#minAge').val()
+                            , maxAge = $('#maxAge').val()
+                            , minIncome = $('#minIncome').val()
+                            , maxIncome = $('#maxIncome').val()
+                            , country = $('#country').val();
+
+                    if (title && startDate) {
+
+                        startDate = new Date(startDate);
+
+                        survey = {
+                            title: title
+                            , startDate: startDate
+                        };
+
+                        if (country) {
+                            survey.target = {
+                                country: country
+                            };
+                        }
+
+                        if (minIncome && maxIncome) {
+                            if (!survey.target) {
+                                survey.target = {};
+                            }
+                            survey.target.incomeRange = [minIncome, maxIncome];
+                        }
+
+                        if (minAge && maxAge) {
+                            if (!survey.target) {
+                                survey.target = {};
+                            }
+                            survey.target.ageRange = [minAge, maxAge];
+                        }
+
+                        $.ajax({
+                            url: '/api/marketing-survey'
+                            , method: 'POST'
+                            , data: JSON.stringify(survey)
+                        }).done(function () {
+                            $('#surveyGrid').datagrid('reload');
+                        });
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <form onsubmit="return false;">
+            <table border="0" width="1000">
+                <tr>
+                    <td colspan="2"><input label="Title:" class="easyui-textbox" id="title" type="text" style="width:100%"/></td>
+                    <td rowspan="2" width="200">
+                        <div class="easyui-panel" title="Target" height="190">
+                            <table width="100%">
+                                <tr>
+                                    <td width="50%">
+                                        <select id="gender" class="easyui-combobox" name="gender" label="Gender:" labelPosition="top" style="width:100%; float: left;">
+                                            <option value="">(not selected)</option>
+                                            <option>M</option>
+                                            <option>F</option>
+                                        </select></td>
+                                    <td>
+                                        <select id="country" class="easyui-combobox" name="country" label="Country:" labelPosition="top" style="width:100%; float: left;">
+                                            <option value="">(not selected)</option>
+                                            <option>IT</option>
+                                            <option>ES</option>
+                                            <option>UK</option>
+                                            <option>US</option>
+                                        </select></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="minAge" class="easyui-numberspinner" label="Minimum age:" labelPosition="top" style="width: 100%"/>
+                                    </td>
+                                    <td>
+                                        <input id="maxAge" class="easyui-numberspinner" label="Maximum age:" labelPosition="top" style="width: 100%"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="minIncome" class="easyui-numberspinner" label="Minimum income:" labelPosition="top" style="width: 100%"/>
+                                    </td>
+                                    <td>
+                                        <input id="maxIncome" class="easyui-numberspinner" label="Maximum income:" labelPosition="top" style="width: 100%"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <input class="easyui-datetimebox" id="startDate" label="Start date" labelPosition="top" style="width: 100%"/>
+                    </td>
+                    <td valign="top" width="80">
+                        <select class="easyui-combobox" id="status" name="status" label="Status:" labelPosition="top" style="width:100%;">
+                            <option value="">(not selected)</option>
+                            <option>NEW</option>
+                            <option>READY</option>
+                            <option>ACTIVE</option>
+                            <option>PAUSED</option>
+                            <option>CLOSED</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td colspan="2">
+                        <a href="#" id="searchButton" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px">Search</a>
+                        <a href="#" id="saveButton" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width:80px">Insert</a>
+                        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'" style="width:80px"
+                           onclick="$('form').form('reset'); return false;">Reset</a>
+                    </td></tr>
+            </table>
+        </form>
+        <br/>
+        <table id="surveyGrid" class="easyui-datagrid" fitColumns="true">
+            <thead>
+                <tr>
+                    <th field="status" width="10">Status</th>
+                    <th field="title" width="80" editor="text">Title</th>
+                    <th field="startDate" editor="datetimebox">Start date</th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>
