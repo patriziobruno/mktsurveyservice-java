@@ -15,6 +15,7 @@
  */
 package net.dstc.mkts.rest;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.Contact;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
@@ -25,6 +26,7 @@ import io.swagger.models.Swagger;
 import io.swagger.models.auth.OAuth2Definition;
 import java.util.HashMap;
 import java.util.Map;
+import javax.ws.rs.Path;
 
 /**
  *
@@ -45,6 +47,7 @@ import java.util.Map;
         schemes
         = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS}
 )
+@Path("")
 public class MktSurveyApiDefinition implements ReaderListener {
 
     public static final String TOKEN_AUTH_SCHEME = "oauth2";
