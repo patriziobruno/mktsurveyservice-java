@@ -17,6 +17,7 @@ package net.dstc.mkts.api;
 
 import javax.servlet.http.HttpServletRequest;
 import net.dstc.mkts.rest.auth.NotAuthException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 /**
  *
@@ -24,7 +25,7 @@ import net.dstc.mkts.rest.auth.NotAuthException;
  */
 public interface AuthManager {
 
-    void assertIsValidToken(HttpServletRequest request) throws NotAuthException;
+    void assertIsValidToken(HttpServletRequest request) throws NotAuthException, OAuthSystemException;
 
     void addToken(String token);
 

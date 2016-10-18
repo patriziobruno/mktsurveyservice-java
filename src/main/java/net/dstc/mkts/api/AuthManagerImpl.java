@@ -44,12 +44,13 @@ import org.apache.oltu.oauth2.rs.response.OAuthRSResponse;
 @Singleton
 public class AuthManagerImpl implements AuthManager {
 
+    public final static Logger LOGGER = Logger.getLogger(AuthManagerImpl.class.getName());
     public final List<String> tokens = new ArrayList<>();
     public final List<String> authCodes = new ArrayList<>();
-    
+
     @Override
     public void assertIsValidToken(HttpServletRequest request) throws
-            NotAuthException {
+            NotAuthException, OAuthSystemException {
         try {
             // Make the OAuth Request out of this request
             OAuthAccessResourceRequest oauthRequest
@@ -84,7 +85,8 @@ public class AuthManagerImpl implements AuthManager {
                     throw new NotAuthException(oauthResponse.getHeader(
                             OAuth.HeaderType.WWW_AUTHENTICATE));
                 } catch (OAuthSystemException ex) {
-                    throw new NotAuthException(ex.getMessage());
+                    LOGGER.log(Level.SEVERE, null, ex);
+                    throw ex;
                 }
             }
 
@@ -92,25 +94,23 @@ public class AuthManagerImpl implements AuthManager {
             try {
                 oauthResponse
                         = OAuthRSResponse
-                        .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                        .setRealm("mktsurvey")
-                        .setError(e.getError())
-                        .setErrorDescription(e.getDescription())
-                        .setErrorUri(e.getUri())
-                        .buildHeaderMessage();
+                                .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
+                                .setRealm("mktsurvey")
+                                .setError(e.getError())
+                                .setErrorDescription(e.getDescription())
+                                .setErrorUri(e.getUri())
+                                .buildHeaderMessage();
+
+                throw new NotAuthException(oauthResponse.getHeader(
+                        OAuth.HeaderType.WWW_AUTHENTICATE));
+
             } catch (OAuthSystemException ex) {
-                Logger.getLogger(AuthManagerImpl.class.getName()).
-                        log(Level.SEVERE, null, ex);
-                throw new NotAuthException(ex.getMessage());
+                LOGGER.log(Level.SEVERE, null, ex);
+                throw ex;
             }
-
-            throw new NotAuthException(oauthResponse.getHeader(
-                    OAuth.HeaderType.WWW_AUTHENTICATE));
         } catch (OAuthSystemException ex) {
-            Logger.getLogger(AuthManagerImpl.class.getName()).
-                    log(Level.SEVERE, null, ex);
-
-            throw new NotAuthException(ex.getMessage());
+            LOGGER.log(Level.SEVERE, null, ex);
+            throw ex;
         }
     }
 
