@@ -15,7 +15,6 @@
  */
 package net.dstc.mkts.api;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import mockit.Expectations;
@@ -23,6 +22,13 @@ import mockit.Mock;
 import mockit.MockUp;
 import mockit.Mocked;
 import net.dstc.mkts.rest.auth.NotAuthException;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.OAuthResponse;
+import org.apache.oltu.oauth2.common.message.OAuthResponse.OAuthResponseBuilder;
+import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
+import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
+import org.apache.oltu.oauth2.rs.response.OAuthRSResponse;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,10 +60,10 @@ public class AuthManagerImplTest {
     @After
     public void tearDown() {
     }
-    
+
     @Mocked
     HttpServletRequest request;
-    
+
     private static final String VALID_TOKEN = "8fce334ce9dd6e06a58a7c6e4ef5e8af";
     private static final String NOT_VALID_TOKEN = "not_valid_token";
 
@@ -65,10 +71,13 @@ public class AuthManagerImplTest {
      * Test of assertIsValidToken method, of class AuthManagerImpl.
      */
     @Test
-    public void testAssertIsValidToken() {
-        new Expectations() {{
-            request.getHeader("Authorization"); returns("Bearer " + VALID_TOKEN);
-        }};
+    public void testAssertIsValidToken() throws NotAuthException, OAuthSystemException {
+        new Expectations() {
+            {
+                request.getHeader("Authorization");
+                returns("Bearer " + VALID_TOKEN);
+            }
+        };
         System.out.println("assertIsValidToken");
         AuthManagerImpl instance = new AuthManagerImpl();
         instance.addToken(VALID_TOKEN);
@@ -79,14 +88,144 @@ public class AuthManagerImplTest {
      * Test of assertIsValidToken method, of class AuthManagerImpl.
      */
     @Test(expected = NotAuthException.class)
-    public void testAssertIsValidTokenThrowsNotAuthException() {
-        new Expectations() {{
-            request.getHeader("Authorization"); returns("Bearer " + NOT_VALID_TOKEN);
-        }};
+    public void testAssertIsValidTokenThrowsNotAuthExceptionOnInvalidToken() throws NotAuthException, OAuthSystemException {
+        new Expectations() {
+            {
+                request.getHeader("Authorization");
+                returns("Bearer " + NOT_VALID_TOKEN);
+            }
+        };
         System.out.println("assertIsValidToken");
         AuthManagerImpl instance = new AuthManagerImpl();
         instance.addToken(VALID_TOKEN);
         instance.assertIsValidToken(request);
+    }
+
+    /**
+     * Test of assertIsValidToken method, of class AuthManagerImpl.
+     */
+    @Test(expected = OAuthSystemException.class)
+    public void testAssertIsValidTokenThrowsOAuthSystemException() throws NotAuthException, OAuthSystemException {
+
+        new MockUp<OAuthAccessResourceRequest>() {
+
+            @Mock
+            public void $init(HttpServletRequest request, ParameterStyle... parameterStyles) throws OAuthSystemException, OAuthProblemException {
+                throw new OAuthSystemException();
+            }
+        };
+
+        System.out.println("assertIsValidToken");
+        AuthManagerImpl instance = new AuthManagerImpl();
+        instance.addToken(VALID_TOKEN);
+        instance.assertIsValidToken(request);
+    }
+
+    /**
+     * Test of assertIsValidToken method, of class AuthManagerImpl.
+     */
+    @Test(expected = NotAuthException.class)
+    public void testAssertIsValidTokenThrowsNotAuthExceptionOnOAuthProblemExceptionEmptyErrorCode() throws NotAuthException, OAuthSystemException {
+
+        new MockUp<OAuthAccessResourceRequest>() {
+
+            @Mock
+            public void $init(HttpServletRequest request, ParameterStyle... parameterStyles) throws OAuthSystemException, OAuthProblemException {
+                throw OAuthProblemException.error("");
+            }
+        };
+
+        System.out.println("assertIsValidToken");
+        AuthManagerImpl instance = new AuthManagerImpl();
+        instance.addToken(VALID_TOKEN);
+        instance.assertIsValidToken(request);
+    }
+
+    /**
+     * Test of assertIsValidToken method, of class AuthManagerImpl.
+     */
+    @Test(expected = NotAuthException.class)
+    public void testAssertIsValidTokenThrowsNotAuthExceptionOnOAuthProblemExceptionNotEmptyErrorCode() throws NotAuthException, OAuthSystemException {
+
+        new MockUp<OAuthAccessResourceRequest>() {
+
+            @Mock
+            public void $init(HttpServletRequest request, ParameterStyle... parameterStyles) throws OAuthSystemException, OAuthProblemException {
+                throw OAuthProblemException.error("test");
+            }
+        };
+
+        System.out.println("assertIsValidToken");
+        AuthManagerImpl instance = new AuthManagerImpl();
+        instance.addToken(VALID_TOKEN);
+        try {
+            instance.assertIsValidToken(request);
+        } catch (NotAuthException ex) {
+            assertEquals("expected error www-header", ex.getWwwAuthHeader(), "Bearer realm=\"mktsurvey\",error=\"test\"");
+            throw ex;
+        }
+    }
+
+    /**
+     * Test of assertIsValidToken method, of class AuthManagerImpl.
+     */
+    @Test(expected = OAuthSystemException.class)
+    public void testAssertIsValidTokenThrowsOAuthSystemExceptionOnOAuthProblemExceptionEmptyErrorCode() throws NotAuthException, OAuthSystemException {
+
+        new MockUp<OAuthAccessResourceRequest>() {
+            @Mock
+            public void $init(HttpServletRequest request, ParameterStyle... parameterStyles) throws OAuthSystemException, OAuthProblemException {
+                throw OAuthProblemException.error("");
+            }
+        };
+
+        new MockUp<OAuthResponseBuilder>() {
+            @Mock
+            public OAuthResponse buildHeaderMessage() throws OAuthSystemException {
+                throw new OAuthSystemException();
+            }
+        };
+
+        System.out.println("assertIsValidToken");
+        AuthManagerImpl instance = new AuthManagerImpl();
+        instance.addToken(VALID_TOKEN);
+        try {
+            instance.assertIsValidToken(request);
+        } catch (NotAuthException ex) {
+            assertEquals("expected error www-header", ex.getWwwAuthHeader(), "Bearer realm=\"mktsurvey\",error=\"test\"");
+            throw ex;
+        }
+    }
+
+    /**
+     * Test of assertIsValidToken method, of class AuthManagerImpl.
+     */
+    @Test(expected = OAuthSystemException.class)
+    public void testAssertIsValidTokenThrowsOAuthSystemExceptionOnOAuthProblemExceptionNotEmptyErrorCode() throws NotAuthException, OAuthSystemException {
+
+        new MockUp<OAuthAccessResourceRequest>() {
+            @Mock
+            public void $init(HttpServletRequest request, ParameterStyle... parameterStyles) throws OAuthSystemException, OAuthProblemException {
+                throw OAuthProblemException.error("test");
+            }
+        };
+
+        new MockUp<OAuthResponseBuilder>() {
+            @Mock
+            public OAuthResponse buildHeaderMessage() throws OAuthSystemException {
+                throw new OAuthSystemException();
+            }
+        };
+
+        System.out.println("assertIsValidToken");
+        AuthManagerImpl instance = new AuthManagerImpl();
+        instance.addToken(VALID_TOKEN);
+        try {
+            instance.assertIsValidToken(request);
+        } catch (NotAuthException ex) {
+            assertEquals("expected error www-header", ex.getWwwAuthHeader(), "Bearer realm=\"mktsurvey\",error=\"test\"");
+            throw ex;
+        }
     }
 
     /**

@@ -18,9 +18,6 @@ package net.dstc.mkts.data.jcr;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import javax.jcr.RepositoryException;
-import mockit.Mock;
-import mockit.MockUp;
 import mockit.Mocked;
 import net.dstc.mkts.data.SurveyDO;
 import net.dstc.mkts.data.SurveyStatus;
@@ -85,7 +82,7 @@ public class JcrSurveyDAOTest {
      * Test of list method, of class JcrSurveyDAO.
      */
     @Test
-    public void testList() {
+    public void testListWithNullQuery() {
         System.out.println("list");
         SurveyDO query = null;
         JcrSurveyDAO instance = new JcrSurveyDAO();
@@ -93,7 +90,50 @@ public class JcrSurveyDAOTest {
         Collection<SurveyDO> result = instance.list(query);
         assertEquals(expResult, result);
     }
-    
+
+    /**
+     * Test of list method, of class JcrSurveyDAO.
+     */
+    @Test
+    public void testListWithQuery() {
+        System.out.println("list");
+        JcrSurveyDAO instance = new JcrSurveyDAO();
+        SurveyDO query = instance.createSurvey();
+        query.setTarget(instance.createSurveyTarget());
+        query.setStartDate(new Date());
+        query.setTitle("test");
+        query.setStatus(SurveyStatus.READY);
+
+        Collection<SurveyDO> expResult = Collections.emptyList();
+        Collection<SurveyDO> result = instance.list(query);
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testJcrSurveyDOEquals() {
+        System.out.println("JcrSurveyDO.equals");
+        JcrSurveyDO surveyA = new JcrSurveyDO();
+        surveyA.setTarget(new JcrSurveyTargetDO());
+        
+        JcrSurveyDO surveyB = new JcrSurveyDO();
+        
+        JcrSurveyDO surveyC = new JcrSurveyDO();        
+        JcrSurveyTargetDO targetC = new JcrSurveyTargetDO();
+        targetC.setCountry("TS");
+        surveyC.setTarget(targetC);
+        
+        JcrSurveyDO surveyD = new JcrSurveyDO();        
+        surveyD.setTarget(new JcrSurveyTargetDO());
+        
+        assertFalse(surveyA.equals(null));
+        assertFalse(surveyA.equals(""));
+        assertTrue(surveyA.equals(surveyA));
+        assertFalse(surveyA.equals(surveyB));
+        assertFalse(surveyB.equals(surveyA));
+        assertFalse(surveyA.equals(surveyC));
+        assertFalse(surveyA.equals(surveyD));
+    }
+
     @Test
     public void testSearch() {
         System.out.println("search");
@@ -101,10 +141,10 @@ public class JcrSurveyDAOTest {
         query.setStartDate(new Date());
         query.setStatus(SurveyStatus.READY);
         query.setTitle("test");
-        
+
         SurveyTargetDO target = new JcrSurveyTargetDO();
         query.setTarget(target);
-        
+
         target.setCountry("IT");
         target.setGender("M");
         target.setMaxAge(80);
@@ -147,7 +187,8 @@ public class JcrSurveyDAOTest {
     @Test
     public void testUpdate() {
         System.out.println("update");
-        SurveyDO s = null;
+        SurveyDO s = new JcrSurveyDO();
+        s.setId("/survey/1");
         JcrSurveyDAO instance = new JcrSurveyDAO();
         instance.update(s);
     }

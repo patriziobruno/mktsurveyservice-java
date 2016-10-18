@@ -18,6 +18,7 @@ package net.dstc.mkts.data.jpa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -28,6 +29,7 @@ import mockit.Mock;
 import mockit.MockUp;
 import mockit.Mocked;
 import net.dstc.mkts.data.SurveyDO;
+import net.dstc.mkts.data.SurveyStatus;
 import net.dstc.mkts.data.SurveyTargetDO;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -158,7 +160,6 @@ public class JpaSurveyDAOTest {
     public void testCreateSurvey() {
         System.out.println("createSurvey");
         JpaSurveyDAO instance = new JpaSurveyDAO();
-        SurveyDO expResult = null;
         SurveyDO result = instance.createSurvey();
         assertTrue(result instanceof JpaSurveyDO);
     }
@@ -179,11 +180,31 @@ public class JpaSurveyDAOTest {
      * Test of list method, of class JpaSurveyDAO.
      */
     @Test
-    public void testList() {
+    public void testListWithNullQuery() {
         System.out.println("list");
         SurveyDO query = null;
         JpaSurveyDAO instance = new JpaSurveyDAO();
-        Collection<SurveyDO> expResult = Collections.emptyList();
+        Collection<SurveyDO> result = instance.list(query);
+        assertNotNull(result);
+        assertEquals(result.size(), 1);
+        assertTrue(result.toArray()[0] instanceof JpaSurveyDO);
+        JpaSurveyDO survey = (JpaSurveyDO) result.toArray()[0];
+        assertEquals(survey.getTitle(), "#test");
+    }
+
+    /**
+     * Test of list method, of class JpaSurveyDAO.
+     */
+    @Test
+    public void testListWithQuery() {
+        System.out.println("list");
+        JpaSurveyDAO instance = new JpaSurveyDAO();
+        SurveyDO query = instance.createSurvey();
+        query.setTarget(instance.createSurveyTarget());
+        query.setStartDate(new Date());
+        query.setTitle("test");
+        query.setStatus(SurveyStatus.READY);
+        
         Collection<SurveyDO> result = instance.list(query);
         assertNotNull(result);
         assertEquals(result.size(), 1);
