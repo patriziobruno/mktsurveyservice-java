@@ -39,6 +39,7 @@ import net.dstc.mkts.api.SurveyDTO;
 import net.dstc.mkts.api.MarketingSurveyApi;
 import net.dstc.mkts.rest.auth.NotAuthException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 /**
  *
@@ -65,7 +66,7 @@ public class MktSurveyService {
             @ApiParam @QueryParam("filter") String filter,
             @Context HttpServletRequest request,
             @Context HttpServletResponse response
-    ) throws NotAuthException, IOException {
+    ) throws NotAuthException, OAuthSystemException, IOException {
 
         oAuthManager.assertIsValidToken(request);
 
@@ -85,7 +86,7 @@ public class MktSurveyService {
     public void update(SurveyDTO survey,
             @Context HttpServletRequest request,
             @Context HttpServletResponse response
-    ) {
+    ) throws NotAuthException, OAuthSystemException {
         oAuthManager.assertIsValidToken(request);
 
         service.update(survey);
@@ -98,7 +99,7 @@ public class MktSurveyService {
     public void insert(SurveyDTO survey,
             @Context HttpServletRequest request,
             @Context HttpServletResponse response
-    ) {
+    ) throws NotAuthException, OAuthSystemException {
         oAuthManager.assertIsValidToken(request);
 
         service.insert(survey);
