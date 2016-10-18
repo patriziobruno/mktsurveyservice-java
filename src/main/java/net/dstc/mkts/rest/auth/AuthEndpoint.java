@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -50,7 +49,7 @@ import org.apache.oltu.oauth2.common.utils.OAuthUtils;
  */
 @Path("oauth2")
 public class AuthEndpoint {
-    
+
     @Inject
     private AuthManager authManager;
 
@@ -101,7 +100,7 @@ public class AuthEndpoint {
                 throw new WebApplicationException(
                         responseBuilder.entity(
                                 "OAuth callback url needs to be provided by client!!!").
-                        build());
+                                build());
             }
             final OAuthResponse response = OAuthASResponse.errorResponse(
                     HttpServletResponse.SC_FOUND)
@@ -110,11 +109,10 @@ public class AuthEndpoint {
             return responseBuilder.location(location).build();
         }
     }
-    
+
     public static final String INVALID_CLIENT_DESCRIPTION = "Client authentication failed (e.g., unknown client, no client authentication included, or unsupported authentication method).";
 
     @Path("token")
-//    @POST
     @GET
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
@@ -146,10 +144,10 @@ public class AuthEndpoint {
                 // refresh token is not supported in this implementation
                 buildInvalidUserPassResponse();
             }
-            
+
             final String accessToken = oauthIssuerImpl.accessToken();
             authManager.addToken(accessToken);
-            
+
             OAuthResponse response = OAuthASResponse
                     .tokenResponse(HttpServletResponse.SC_OK)
                     .setAccessToken(accessToken)
@@ -165,19 +163,19 @@ public class AuthEndpoint {
     }
 
     private Response buildInvalidClientIdResponse() throws OAuthSystemException {
-        OAuthResponse response =
-                OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-                .setError(OAuthError.TokenResponse.INVALID_CLIENT)
-                .setErrorDescription(INVALID_CLIENT_DESCRIPTION)
-                .buildJSONMessage();
+        OAuthResponse response
+                = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                        .setError(OAuthError.TokenResponse.INVALID_CLIENT)
+                        .setErrorDescription(INVALID_CLIENT_DESCRIPTION)
+                        .buildJSONMessage();
         return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
     }
 
     private Response buildInvalidClientSecretResponse() throws OAuthSystemException {
-        OAuthResponse response =
-                OAuthASResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                .setError(OAuthError.TokenResponse.UNAUTHORIZED_CLIENT).setErrorDescription(INVALID_CLIENT_DESCRIPTION)
-                .buildJSONMessage();
+        OAuthResponse response
+                = OAuthASResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
+                        .setError(OAuthError.TokenResponse.UNAUTHORIZED_CLIENT).setErrorDescription(INVALID_CLIENT_DESCRIPTION)
+                        .buildJSONMessage();
         return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
     }
 
