@@ -15,7 +15,6 @@
  */
 package net.dstc.mkts.rest;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.Contact;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
@@ -27,6 +26,7 @@ import io.swagger.models.auth.OAuth2Definition;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.Path;
+import net.dstc.mkts.ServerMainImpl;
 
 /**
  *
@@ -45,7 +45,9 @@ import javax.ws.rs.Path;
         consumes = {"application/json"},
         produces = {"application/json"},
         schemes
-        = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS}
+        = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
+        basePath = ServerMainImpl.CONTEXT_PATH,
+        host = "localhost:" + ServerMainImpl.SERVER_PORT
 )
 @Path("")
 public class MktSurveyApiDefinition implements ReaderListener {
@@ -61,10 +63,12 @@ public class MktSurveyApiDefinition implements ReaderListener {
     @Override
     public void afterScan(Reader reader, Swagger swagger) {
         OAuth2Definition tokenScheme = new OAuth2Definition();
-
         tokenScheme.setFlow("password");
         tokenScheme.
                 setTokenUrl("https://" + swagger.getHost() + "/oauth2/token");
+        tokenScheme.
+                setAuthorizationUrl(String.format("https://%s%s/oauth2/authorize"
+                , swagger.getHost() , swagger.getBasePath()));
 
         Map<String, String> scopes = new HashMap<>();
         scopes.put(READ_SCOPE, "Read my data");

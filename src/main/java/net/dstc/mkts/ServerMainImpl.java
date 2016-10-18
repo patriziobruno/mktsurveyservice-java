@@ -28,8 +28,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
  */
 public class ServerMainImpl implements ServerMain {
 
-    private static final int SERVER_PORT = 8080;
-    private static final String CONTEXT_PATH = "/api/*";
+    public static final int SERVER_PORT = 8080;
+    public static final String CONTEXT_PATH = "/api";
 
     @Override
     public void run() throws Exception {
@@ -74,7 +74,7 @@ public class ServerMainImpl implements ServerMain {
     @Override
     public String getContextPath() {
         if (StringUtils.isEmpty(contextPath)) {
-            contextPath = CONTEXT_PATH;
+            contextPath = CONTEXT_PATH + "/*";
         }
         return contextPath;
     }
