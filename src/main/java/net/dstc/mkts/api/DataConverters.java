@@ -29,7 +29,6 @@ import net.dstc.mkts.data.SurveyTargetDO;
 public class DataConverters {
 
     private static class Helper {
-
         private final static Map<Class, Converter> INSTANCES = new ConcurrentHashMap<>();
     }
 

@@ -15,7 +15,6 @@
  */
 package net.dstc.mkts.api;
 
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import mockit.Expectations;
 import mockit.Mock;
@@ -28,7 +27,6 @@ import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.OAuthResponse.OAuthResponseBuilder;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
-import org.apache.oltu.oauth2.rs.response.OAuthRSResponse;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

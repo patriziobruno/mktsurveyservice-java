@@ -200,7 +200,14 @@ public class JpaSurveyDAOTest {
         System.out.println("list");
         JpaSurveyDAO instance = new JpaSurveyDAO();
         SurveyDO query = instance.createSurvey();
-        query.setTarget(instance.createSurveyTarget());
+        SurveyTargetDO target = instance.createSurveyTarget();
+        target.setCountry("UK");
+        target.setGender("F");
+        target.setMinAge(30);
+        target.setMaxAge(60);
+        target.setMinIncome(68000);
+        target.setMaxIncome(880000);
+        query.setTarget(target);
         query.setStartDate(new Date());
         query.setTitle("test");
         query.setStatus(SurveyStatus.READY);
@@ -232,5 +239,14 @@ public class JpaSurveyDAOTest {
         Collection<SurveyDO> expResult = Collections.emptyList();
         Collection<SurveyDO> result = instance.list(query);
         assertEquals(expResult, result);
+    }
+    
+    @Test
+    public void testSurveyTargetDOEquals() {
+        JpaSurveyDAO instance = new JpaSurveyDAO();
+        SurveyTargetDO target = instance.createSurveyTarget();
+        assertEquals(target, target);
+        assertNotEquals(target, null);
+        assertNotEquals(target, "");
     }
 }

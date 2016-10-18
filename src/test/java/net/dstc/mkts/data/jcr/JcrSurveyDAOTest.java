@@ -114,24 +114,36 @@ public class JcrSurveyDAOTest {
         System.out.println("JcrSurveyDO.equals");
         JcrSurveyDO surveyA = new JcrSurveyDO();
         surveyA.setTarget(new JcrSurveyTargetDO());
-        
+
         JcrSurveyDO surveyB = new JcrSurveyDO();
-        
-        JcrSurveyDO surveyC = new JcrSurveyDO();        
+
+        JcrSurveyDO surveyC = new JcrSurveyDO();
         JcrSurveyTargetDO targetC = new JcrSurveyTargetDO();
         targetC.setCountry("TS");
         surveyC.setTarget(targetC);
-        
-        JcrSurveyDO surveyD = new JcrSurveyDO();        
+
+        JcrSurveyDO surveyD = new JcrSurveyDO();
         surveyD.setTarget(new JcrSurveyTargetDO());
-        
-        assertFalse(surveyA.equals(null));
-        assertFalse(surveyA.equals(""));
-        assertTrue(surveyA.equals(surveyA));
-        assertFalse(surveyA.equals(surveyB));
-        assertFalse(surveyB.equals(surveyA));
-        assertFalse(surveyA.equals(surveyC));
-        assertFalse(surveyA.equals(surveyD));
+
+        assertNotEquals(surveyA, null);
+        assertNotEquals(surveyA, "");
+        assertEquals(surveyA, surveyA);
+        assertNotEquals(surveyA, surveyB);
+        assertNotEquals(surveyB, surveyA);
+        assertNotEquals(surveyA, surveyC);
+        assertNotEquals(surveyA, surveyD);
+    }
+
+    @Test
+    public void testJcrTargetSurveyDOEquals() {
+        System.out.println("JcrSurveyTargetDO.equals");
+        JcrSurveyTargetDO targetA = new JcrSurveyTargetDO();
+        JcrSurveyTargetDO targetB = new JcrSurveyTargetDO();
+
+        assertNotEquals(targetA, null);
+        assertNotEquals(targetA, "");
+        assertEquals(targetA, targetA);
+        assertEquals(targetA, targetB);
     }
 
     @Test

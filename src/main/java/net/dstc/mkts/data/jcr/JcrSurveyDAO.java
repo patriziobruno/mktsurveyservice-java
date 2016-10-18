@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 import javax.jcr.Repository;
