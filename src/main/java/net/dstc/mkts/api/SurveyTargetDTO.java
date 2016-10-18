@@ -15,6 +15,8 @@
  */
 package net.dstc.mkts.api;
 
+import java.util.Arrays;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -64,5 +66,42 @@ public class SurveyTargetDTO {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + Arrays.hashCode(this.ageRange);
+        hash = 29 * hash + Arrays.hashCode(this.incomeRange);
+        hash = 29 * hash + Objects.hashCode(this.country);
+        hash = 29 * hash + Objects.hashCode(this.gender);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SurveyTargetDTO other = (SurveyTargetDTO) obj;
+        if (!Objects.equals(this.country, other.getCountry())) {
+            return false;
+        }
+        if (!Objects.equals(this.gender, other.getGender())) {
+            return false;
+        }
+        if (!Arrays.equals(this.ageRange, other.getAgeRange())) {
+            return false;
+        }
+        if (!Arrays.equals(this.incomeRange, other.getIncomeRange())) {
+            return false;
+        }
+        return hashCode() == other.hashCode();
     }
 }
