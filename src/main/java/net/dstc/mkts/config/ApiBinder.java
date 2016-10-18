@@ -18,6 +18,7 @@ package net.dstc.mkts.config;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.inject.Singleton;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 /**
@@ -38,18 +39,13 @@ public class ApiBinder extends AbstractBinder {
         bindings.forEach((Object bindingInterface, Object bindingClass) -> {
 
             try {
-                if (!bindingInterface.toString().endsWith(".singleton")) {
-                    Class iface = loader.loadClass(bindingInterface.toString());
-                    Class cl = loader.loadClass(bindingClass.toString());
-                    boolean singleton = Boolean.parseBoolean(bindings.
-                            getProperty(
-                                    bindingInterface + ".singleton"));
-
-                    if (singleton) {
-                        bind(cl.newInstance()).to(iface);
-                    } else {
-                        bind(cl).to(iface);
-                    }
+                Class iface = loader.loadClass(bindingInterface.toString());
+                Class cl = loader.loadClass(bindingClass.toString());
+                boolean singleton = (cl.getAnnotation(Singleton.class) != null);
+                if (singleton) {
+                    bind(cl.newInstance()).to(iface);
+                } else {
+                    bind(cl).to(iface);
                 }
             } catch (ClassNotFoundException | InstantiationException |
                     IllegalAccessException ex) {
