@@ -15,7 +15,6 @@
  */
 package net.dstc.mkts.api;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.dstc.mkts.data.SurveyDAO;
@@ -55,16 +54,18 @@ public class DataConverters {
         }
 
         public SurveyDTO surveyDOtoDTO(SurveyDO dataObject) {
-            final SurveyTargetDTO target = surveyTargetDOtoDTO(dataObject.getTarget());
-            return new SurveyDTO() {
-                {
-                    setId(dataObject.getId());
-                    setTitle(dataObject.getTitle());
-                    setStatus(dataObject.getStatus());
-                    setStartDate(dataObject.getStartDate());
-                    setTarget(target);
-                }
-            };
+            SurveyDTO rv = null;
+            if (dataObject != null) {
+                final SurveyTargetDTO target = surveyTargetDOtoDTO(dataObject.getTarget());
+                rv = new SurveyDTO();
+
+                rv.setId(dataObject.getId());
+                rv.setTitle(dataObject.getTitle());
+                rv.setStatus(dataObject.getStatus());
+                rv.setStartDate(dataObject.getStartDate());
+                rv.setTarget(target);
+            }
+            return rv;
         }
 
         public SurveyTargetDTO surveyTargetDOtoDTO(SurveyTargetDO targetSrc) {
