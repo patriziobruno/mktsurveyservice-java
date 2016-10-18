@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import net.dstc.mkts.data.SurveyDO;
 import net.dstc.mkts.data.SurveyDAO;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -69,6 +70,17 @@ public class MarketingSurveyApiImpl implements MarketingSurveyApi {
 
     @Override
     public void delete(String id) {
+        if(StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException("id must have a value");
+        }
         data.delete(id);
+    }
+
+    @Override
+    public SurveyDTO get(String id) {
+        if(StringUtils.isBlank(id)) {
+            throw new IllegalArgumentException("id must have a value");
+        }
+        return getConverter().surveyDOtoDTO(data.get(id));
     }
 }

@@ -24,6 +24,7 @@ import java.util.Collection;
 public interface MarketingSurveyApi {
 
     Collection<SurveyDTO> getList(SurveyDTO query);
+    SurveyDTO get(String id);
     void insert(SurveyDTO survey);
     void update(SurveyDTO survey);
     void delete(String id);
