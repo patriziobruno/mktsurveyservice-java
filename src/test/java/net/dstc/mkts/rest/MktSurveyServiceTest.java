@@ -19,12 +19,14 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Tested;
 import net.dstc.mkts.api.AuthManager;
 import net.dstc.mkts.api.MarketingSurveyApi;
 import net.dstc.mkts.api.SurveyDTO;
+import net.dstc.mkts.rest.auth.NotAuthException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,31 +42,34 @@ public class MktSurveyServiceTest {
 
     @Mocked
     private HttpServletResponse response;
-    
+
+    @Mocked
+    private HttpServletRequest request;
+
     @Injectable
     private AuthManager authManager;
-    
+
     @Injectable
     private MarketingSurveyApi api;
-    
+
     @Tested
     private MktSurveyService instance;
-    
+
     public MktSurveyServiceTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -117,5 +122,22 @@ public class MktSurveyServiceTest {
         SurveyDTO survey = new SurveyDTO();
         HttpServletRequest request = null;
         instance.insert(survey, request, response);
-    }    
+    }
+
+    /**
+     * Test of insert method, of class MktSurveyService.
+     */
+    @Test(expected = NotAuthException.class)
+    public void testInsertNotAuthenticated() throws Exception {
+        new Expectations() {
+            {
+                authManager.assertIsValidToken(request);
+                result = new NotAuthException(anyString);
+            }
+        };
+        System.out.println("insert");
+        SurveyDTO survey = new SurveyDTO();
+        //HttpServletRequest request = null;
+        instance.insert(survey, request, response);
+    }
 }
