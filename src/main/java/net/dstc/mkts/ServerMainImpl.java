@@ -33,6 +33,11 @@ public class ServerMainImpl implements ServerMain {
 
     @Override
     public void run() throws Exception {
+        run(true);
+    }
+
+    @Override
+    public void run(boolean keepRunning) throws Exception {
         ServletContextHandler context = new ServletContextHandler(
                 ServletContextHandler.SESSIONS);
         String webDir = getClass().getClassLoader().getResource("html").
@@ -62,7 +67,11 @@ public class ServerMainImpl implements ServerMain {
 
         try {
             jettyServer.start();
-            jettyServer.join();
+            if (keepRunning) {
+                jettyServer.join();
+            } else {
+                jettyServer.stop();
+            }
         } finally {
             jettyServer.destroy();
         }

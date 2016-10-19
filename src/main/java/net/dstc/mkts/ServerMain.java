@@ -28,4 +28,5 @@ public interface ServerMain {
     void setPort(int port);
     
     public void run() throws Exception;
+    public void run(boolean keepRunning) throws Exception;
 }

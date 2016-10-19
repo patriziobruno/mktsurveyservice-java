@@ -18,6 +18,16 @@ package net.dstc.mkts.data.jcr;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.jcr.Credentials;
+import javax.jcr.LoginException;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import mockit.Expectations;
+import mockit.Mock;
+import mockit.MockUp;
 import mockit.Mocked;
 import net.dstc.mkts.data.SurveyDO;
 import net.dstc.mkts.data.SurveyStatus;
@@ -61,16 +71,27 @@ public class JcrSurveyDAOTest {
     RepositoryConfig config;
 
     @Mocked
-    RepositoryImpl repository;
-
-    @Mocked
     ObjectContentManagerImpl objectContentManager;
+
+    @Test
+    public void testConstructorHandlingRepositoryException() throws RepositoryException {
+        System.out.println("JcrSurveyDAO");
+
+        new MockUp<RepositoryImpl>() {
+            @Mock
+            public RepositoryImpl create(RepositoryConfig config) throws RepositoryException {
+                throw new RepositoryException();
+            }
+        };
+
+        JcrSurveyDAO dao = new JcrSurveyDAO();
+    }
 
     /**
      * Test of add method, of class JcrSurveyDAO.
      */
     @Test
-    public void testAdd() {
+    public void testAdd(@Mocked RepositoryImpl repository) {
 
         System.out.println("add");
         SurveyDO survey = null;
@@ -82,7 +103,7 @@ public class JcrSurveyDAOTest {
      * Test of list method, of class JcrSurveyDAO.
      */
     @Test
-    public void testListWithNullQuery() {
+    public void testListWithNullQuery(@Mocked RepositoryImpl repository) {
         System.out.println("list");
         SurveyDO query = null;
         JcrSurveyDAO instance = new JcrSurveyDAO();
@@ -95,7 +116,7 @@ public class JcrSurveyDAOTest {
      * Test of list method, of class JcrSurveyDAO.
      */
     @Test
-    public void testListWithQuery() {
+    public void testListWithQuery(@Mocked RepositoryImpl repository) {
         System.out.println("list");
         JcrSurveyDAO instance = new JcrSurveyDAO();
         SurveyDO query = instance.createSurvey();
@@ -110,7 +131,7 @@ public class JcrSurveyDAOTest {
     }
 
     @Test
-    public void testJcrSurveyDOEquals() {
+    public void testJcrSurveyDOEquals(@Mocked RepositoryImpl repository) {
         System.out.println("JcrSurveyDO.equals");
         JcrSurveyDO surveyA = new JcrSurveyDO();
         surveyA.setTarget(new JcrSurveyTargetDO());
@@ -135,7 +156,7 @@ public class JcrSurveyDAOTest {
     }
 
     @Test
-    public void testJcrTargetSurveyDOEquals() {
+    public void testJcrTargetSurveyDOEquals(@Mocked RepositoryImpl repository) {
         System.out.println("JcrSurveyTargetDO.equals");
         JcrSurveyTargetDO targetA = new JcrSurveyTargetDO();
         JcrSurveyTargetDO targetB = new JcrSurveyTargetDO();
@@ -147,7 +168,7 @@ public class JcrSurveyDAOTest {
     }
 
     @Test
-    public void testSearch() {
+    public void testSearch(@Mocked RepositoryImpl repository) {
         System.out.println("search");
         SurveyDO query = new JcrSurveyDO();
         query.setStartDate(new Date());
@@ -173,7 +194,7 @@ public class JcrSurveyDAOTest {
      * Test of get method, of class JcrSurveyDAO.
      */
     @Test
-    public void testGet() {
+    public void testGet(@Mocked RepositoryImpl repository) {
         System.out.println("get");
         String id = "";
         JcrSurveyDAO instance = new JcrSurveyDAO();
@@ -186,7 +207,7 @@ public class JcrSurveyDAOTest {
      * Test of delete method, of class JcrSurveyDAO.
      */
     @Test
-    public void testDelete() {
+    public void testDelete(@Mocked RepositoryImpl repository) {
         System.out.println("delete");
         String id = "";
         JcrSurveyDAO instance = new JcrSurveyDAO();
@@ -197,7 +218,7 @@ public class JcrSurveyDAOTest {
      * Test of update method, of class JcrSurveyDAO.
      */
     @Test
-    public void testUpdate() {
+    public void testUpdate(@Mocked RepositoryImpl repository) {
         System.out.println("update");
         SurveyDO s = new JcrSurveyDO();
         s.setId("/survey/1");
@@ -209,7 +230,7 @@ public class JcrSurveyDAOTest {
      * Test of createSurvey method, of class JcrSurveyDAO.
      */
     @Test
-    public void testCreateSurvey() {
+    public void testCreateSurvey(@Mocked RepositoryImpl repository) {
         System.out.println("createSurvey");
         JcrSurveyDAO instance = new JcrSurveyDAO();
         SurveyDO result = instance.createSurvey();
@@ -220,7 +241,7 @@ public class JcrSurveyDAOTest {
      * Test of createSurveyTarget method, of class JcrSurveyDAO.
      */
     @Test
-    public void testCreateSurveyTarget() {
+    public void testCreateSurveyTarget(@Mocked RepositoryImpl repository) {
         System.out.println("createSurveyTarget");
         JcrSurveyDAO instance = new JcrSurveyDAO();
         SurveyTargetDO expResult = new JcrSurveyTargetDO();

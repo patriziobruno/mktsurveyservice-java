@@ -189,6 +189,7 @@ public class JpaSurveyDAOTest {
         assertEquals(result.size(), 1);
         assertTrue(result.toArray()[0] instanceof JpaSurveyDO);
         JpaSurveyDO survey = (JpaSurveyDO) result.toArray()[0];
+        assertNull(survey.getId());
         assertEquals(survey.getTitle(), "#test");
     }
 

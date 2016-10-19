@@ -53,13 +53,9 @@ import net.dstc.mkts.data.SurveyDAO;
 @Singleton
 public class JcrSurveyDAO implements SurveyDAO {
 
-    private static ObjectContentManager ocm = null;
+    private ObjectContentManager ocm = null;
 
-    static {
-        staticInit();
-    }
-
-    static void staticInit() {
+    public JcrSurveyDAO() {
         try {
             RepositoryConfig config = RepositoryConfig.create(SurveyDAO.class.
                     getClassLoader().getResourceAsStream("repository.xml"),
