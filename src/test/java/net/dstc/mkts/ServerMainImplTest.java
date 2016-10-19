@@ -56,6 +56,7 @@ public class ServerMainImplTest {
         boolean keepRunning = false;
         ServerMainImpl instance = new ServerMainImpl();
         instance.run(keepRunning);
+        instance.stop();
     }
 
     /**

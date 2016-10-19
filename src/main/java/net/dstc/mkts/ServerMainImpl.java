@@ -31,54 +31,70 @@ public class ServerMainImpl implements ServerMain {
     public static final int SERVER_PORT = 8080;
     public static final String CONTEXT_PATH = "/api";
 
+    private String contextPath;
+    private int port;
+
+    private org.eclipse.jetty.server.Server jettyServer;
+
     @Override
     public void run() throws Exception {
         run(true);
     }
 
     @Override
-    public void run(boolean keepRunning) throws Exception {
-        ServletContextHandler context = new ServletContextHandler(
-                ServletContextHandler.SESSIONS);
-        String webDir = getClass().getClassLoader().getResource("html").
-                toExternalForm();
-        Logger.getLogger(getClass().getName()).log(Level.INFO, webDir);
-        context.setResourceBase(webDir);
-        context.setContextPath("/");
+    public void run(boolean join) throws Exception {
+        if (jettyServer == null || !jettyServer.isRunning()) {
+            ServletContextHandler context = new ServletContextHandler(
+                    ServletContextHandler.SESSIONS);
+            String webDir = getClass().getClassLoader().getResource("html").
+                    toExternalForm();
+            Logger.getLogger(getClass().getName()).log(Level.INFO, webDir);
+            context.setResourceBase(webDir);
+            context.setContextPath("/");
 
-        org.eclipse.jetty.server.Server jettyServer
-                = new org.eclipse.jetty.server.Server(getPort());
-        jettyServer.setHandler(context);
+            jettyServer = new org.eclipse.jetty.server.Server(getPort());
+            jettyServer.setHandler(context);
 
-        ServletHolder jerseyServlet = context.addServlet(
-                org.glassfish.jersey.servlet.ServletContainer.class,
-                getContextPath());
-        jerseyServlet.setInitOrder(0);
+            ServletHolder jerseyServlet = context.addServlet(
+                    org.glassfish.jersey.servlet.ServletContainer.class,
+                    getContextPath());
+            jerseyServlet.setInitOrder(0);
 
-        // Tells the Jersey Servlet which REST service/class to load.
-        jerseyServlet.setInitParameter("javax.ws.rs.Application",
-                MktSurveyApplication.class.getCanonicalName());
+            // Tells the Jersey Servlet which REST service/class to load.
+            jerseyServlet.setInitParameter("javax.ws.rs.Application",
+                    MktSurveyApplication.class.getCanonicalName());
 
-        DefaultServlet defaultServlet = new DefaultServlet();
-        ServletHolder holderPwd = new ServletHolder("default", defaultServlet);
-        holderPwd.setInitParameter("resourceBase", webDir);
-        holderPwd.setInitParameter("dirAllowed", "true");
-        context.addServlet(holderPwd, "/*");
+            DefaultServlet defaultServlet = new DefaultServlet();
+            ServletHolder holderPwd = new ServletHolder("default",
+                    defaultServlet);
+            holderPwd.setInitParameter("resourceBase", webDir);
+            holderPwd.setInitParameter("dirAllowed", "true");
+            context.addServlet(holderPwd, "/*");
 
+            try {
+                jettyServer.start();
+                if (join) {
+                    jettyServer.join();
+                }
+            } finally {
+                if (join) {
+                    jettyServer.destroy();
+                    jettyServer = null;
+                }
+            }
+        }
+    }
+
+    public void stop() throws Exception {
         try {
-            jettyServer.start();
-            if (keepRunning) {
-                jettyServer.join();
-            } else {
+            if (jettyServer != null && jettyServer.isRunning()) {
                 jettyServer.stop();
             }
         } finally {
             jettyServer.destroy();
+            jettyServer = null;
         }
-
     }
-
-    private String contextPath;
 
     @Override
     public String getContextPath() {
@@ -92,8 +108,6 @@ public class ServerMainImpl implements ServerMain {
     public void setContextPath(String path) {
         contextPath = path;
     }
-
-    private int port;
 
     @Override
     public int getPort() {
