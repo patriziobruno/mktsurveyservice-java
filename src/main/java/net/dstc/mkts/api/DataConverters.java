@@ -21,17 +21,20 @@ import net.dstc.mkts.data.SurveyDAO;
 import net.dstc.mkts.data.SurveyDO;
 import net.dstc.mkts.data.SurveyStatus;
 import net.dstc.mkts.data.SurveyTargetDO;
+import org.eclipse.jetty.util.StringUtil;
 
 /**
  *
  * @author eul0860
  */
 public class DataConverters {
-
+    
     private static class Helper {
-        private final static Map<Class, Converter> INSTANCES = new ConcurrentHashMap<>();
-    }
 
+        private final static Map<Class, Converter> INSTANCES
+                = new ConcurrentHashMap<>();
+    }
+    
     public static Converter getConverter(SurveyDAO dao) {
         Converter converter;
         Class cl = dao.getClass();
@@ -43,21 +46,22 @@ public class DataConverters {
         }
         return converter;
     }
-
+    
     public static class Converter {
-
+        
         private final SurveyDAO data;
-
+        
         private Converter(SurveyDAO data) {
             this.data = data;
         }
-
+        
         public SurveyDTO surveyDOtoDTO(SurveyDO dataObject) {
             SurveyDTO rv = null;
             if (dataObject != null) {
-                final SurveyTargetDTO target = surveyTargetDOtoDTO(dataObject.getTarget());
+                final SurveyTargetDTO target = surveyTargetDOtoDTO(dataObject.
+                        getTarget());
                 rv = new SurveyDTO();
-
+                
                 rv.setId(dataObject.getId());
                 rv.setTitle(dataObject.getTitle());
                 rv.setStatus(dataObject.getStatus());
@@ -66,46 +70,51 @@ public class DataConverters {
             }
             return rv;
         }
-
+        
         public SurveyTargetDTO surveyTargetDOtoDTO(SurveyTargetDO targetSrc) {
             SurveyTargetDTO target = null;
             if (targetSrc != null) {
                 target = new SurveyTargetDTO() {
                     {
                         setCountry(targetSrc.getCountry());
-                        setAgeRange(new int[]{targetSrc.getMinAge(), targetSrc.getMaxAge()});
-                        setIncomeRange(new int[]{targetSrc.getMinIncome(), targetSrc.getMaxIncome()});
+                        setAgeRange(new int[]{targetSrc.getMinAge(), targetSrc.
+                            getMaxAge()});
+                        setIncomeRange(new int[]{targetSrc.getMinIncome(),
+                            targetSrc.getMaxIncome()});
                     }
                 };
             }
             return target;
         }
-
+        
         public SurveyDO surveyDTOtoDO(SurveyDTO dto) {
             SurveyDO survey = data.createSurvey();
-            survey.setId(dto.getId());
+            String id = dto.getId();
+            if (!StringUtil.isBlank(id)) {
+                survey.setId(id);
+            }
             survey.setStartDate(dto.getStartDate());
             survey.setStatus(SurveyStatus.NEW);
             survey.setTitle(dto.getTitle());
             survey.setTarget(surveyTargetDTOtoDO(dto.getTarget()));
-
+            
             return survey;
         }
-
+        
         public SurveyTargetDO surveyTargetDTOtoDO(SurveyTargetDTO dto) {
             SurveyTargetDO target = null;
-
+            
             if (dto != null) {
                 target = data.createSurveyTarget();
                 target.setCountry(dto.getCountry());
                 target.setGender(target.getGender());
-
+                
                 int[] ageRange = dto.getAgeRange();
                 if (ageRange != null && ageRange.length > 1) {
                     target.setMaxAge(dto.getAgeRange()[1]);
                     target.setMinAge(dto.getAgeRange()[0]);
                 }
-
+                
                 int[] incomeRange = dto.getIncomeRange();
                 if (incomeRange != null && incomeRange.length > 1) {
                     target.setMaxIncome(dto.getIncomeRange()[1]);
