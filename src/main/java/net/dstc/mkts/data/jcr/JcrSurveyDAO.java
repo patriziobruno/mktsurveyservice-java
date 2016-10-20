@@ -53,31 +53,33 @@ import net.dstc.mkts.data.SurveyDAO;
 @Singleton
 public class JcrSurveyDAO implements SurveyDAO {
 
-    private ObjectContentManager ocm = null;
+    private static ObjectContentManager ocm = null;
 
     public JcrSurveyDAO() {
-        try {
-            RepositoryConfig config = RepositoryConfig.create(SurveyDAO.class.
-                    getClassLoader().getResourceAsStream("repository.xml"),
-                    "/tmp/mktsurvey");
-            Repository rep = RepositoryImpl.create(config);
-            Session session = rep.login(new SimpleCredentials("admin", "admin".
-                    toCharArray()));
+        if (ocm == null) {
+            try {
+                RepositoryConfig config = RepositoryConfig.create(SurveyDAO.class.
+                        getClassLoader().getResourceAsStream("repository.xml"),
+                        "/tmp/mktsurvey");
+                Repository rep = RepositoryImpl.create(config);
+                Session session = rep.login(new SimpleCredentials("admin", "admin".
+                        toCharArray()));
 
-            List<Class> classes = new ArrayList<>(1);
-            classes.add(SurveyTargetDO.class);
-            classes.add(JcrSurveyTargetDO.class);
-            classes.add(JcrSurveyDO.class);
-            classes.add(JcrSurveyDAO.class);
-            Mapper mapper = new AnnotationMapperImpl(classes);
+                List<Class> classes = new ArrayList<>(1);
+                classes.add(SurveyTargetDO.class);
+                classes.add(JcrSurveyTargetDO.class);
+                classes.add(JcrSurveyDO.class);
+                classes.add(JcrSurveyDAO.class);
+                Mapper mapper = new AnnotationMapperImpl(classes);
 
-            session.getRootNode().addNode("survey");
-            session.save();
+                session.getRootNode().addNode("survey");
+                session.save();
 
-            ocm = new ObjectContentManagerImpl(session, mapper);
-        } catch (RepositoryException ex) {
-            Logger.getLogger(JcrSurveyDAO.class.getName()).log(Level.SEVERE,
-                    null, ex);
+                ocm = new ObjectContentManagerImpl(session, mapper);
+            } catch (RepositoryException ex) {
+                Logger.getLogger(JcrSurveyDAO.class.getName()).log(Level.SEVERE,
+                        null, ex);
+            }
         }
     }
 
