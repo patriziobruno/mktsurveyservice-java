@@ -85,6 +85,7 @@ public class ServerMainImpl implements ServerMain {
         }
     }
 
+    @Override
     public void stop() throws Exception {
         try {
             if (jettyServer != null && jettyServer.isRunning()) {
