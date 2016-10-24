@@ -53,7 +53,7 @@ import net.dstc.mkts.data.SurveyDAO;
 @Singleton
 public class JcrSurveyDAO implements SurveyDAO {
 
-    private static ObjectContentManager ocm = null;
+    private ObjectContentManager ocm = null;
 
     public JcrSurveyDAO() {
         if (ocm == null) {
@@ -90,10 +90,10 @@ public class JcrSurveyDAO implements SurveyDAO {
         filter.setScope("/survey//");
 
         if (query != null) {
-            String id = query.getId();
-            if (!StringUtils.isEmpty(id)) {
-                filter.addEqualTo("id", id);
-            }
+//            String id = query.getId();
+//            if (!StringUtils.isEmpty(id)) {
+//                filter.addEqualTo("id", id);
+//            }
 
             Date startDate = query.getStartDate();
             if (startDate != null) {
