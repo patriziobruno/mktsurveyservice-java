@@ -137,7 +137,6 @@ public class MktSurveyServiceTest {
         };
         System.out.println("insert");
         SurveyDTO survey = new SurveyDTO();
-        //HttpServletRequest request = null;
         instance.insert(survey, request, response);
     }
 }
