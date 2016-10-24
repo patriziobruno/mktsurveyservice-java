@@ -57,9 +57,10 @@ public class MarketingSurveyApiImpl implements MarketingSurveyApi {
     }
 
     @Override
-    public void insert(SurveyDTO survey) {
+    public SurveyDTO insert(SurveyDTO survey) {
         SurveyDO s = getConverter().surveyDTOtoDO(survey);
         data.add(s);
+        return getConverter().surveyDOtoDTO(s);
     }
 
     @Override

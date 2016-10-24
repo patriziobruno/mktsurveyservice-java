@@ -25,7 +25,7 @@ public interface MarketingSurveyApi {
 
     Collection<SurveyDTO> getList(SurveyDTO query);
     SurveyDTO get(String id);
-    void insert(SurveyDTO survey);
+    SurveyDTO insert(SurveyDTO survey);
     void update(SurveyDTO survey);
     void delete(String id);
 }
