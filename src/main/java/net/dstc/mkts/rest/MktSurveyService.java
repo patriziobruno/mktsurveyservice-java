@@ -105,5 +105,8 @@ public class MktSurveyService {
         service.insert(survey);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
+        try {
+            response.getOutputStream().close();
+        } catch(Exception ex) {}
     }
 }
