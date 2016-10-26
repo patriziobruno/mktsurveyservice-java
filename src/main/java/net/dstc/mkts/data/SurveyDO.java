@@ -23,6 +23,10 @@ import java.util.Date;
  */
 public interface SurveyDO {
 
+    /**
+     * Gets the unique id of the object, it must contain a UUID
+     * @return unique id of the object
+     */
     String getId();
 
     Date getStartDate();
@@ -33,6 +37,10 @@ public interface SurveyDO {
 
     SurveyTargetDO getTarget();
 
+    /**
+     * Sets the unique id of the object, it must contain a UUID
+     * @param id unique id for the object
+     */
     void setId(String id);
 
     void setStartDate(Date startDate);

@@ -18,8 +18,7 @@ package net.dstc.mkts.data.jcr;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.util.UUID;
 import net.dstc.mkts.data.SurveyStatus;
 import org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
@@ -36,8 +35,6 @@ import net.dstc.mkts.data.SurveyTargetDO;
 public class JcrSurveyDO implements Serializable, SurveyDO {
 
     @Field(path = true)
-    @Id
-    @GeneratedValue
     private String id;
     @Field
     private String title;
@@ -49,8 +46,7 @@ public class JcrSurveyDO implements Serializable, SurveyDO {
     private SurveyTargetDO target;
 
     public JcrSurveyDO() {
-        Integer tmp = ((int) (Math.random() * 10000000));
-        id = "/survey/" + tmp.toString();
+        id = "/survey/" + UUID.randomUUID().toString();
     }
 
     @Override
@@ -112,21 +108,25 @@ public class JcrSurveyDO implements Serializable, SurveyDO {
         if (this == b) {
             return true;
         }
-        
-        if(b instanceof JcrSurveyDO == false)
+
+        if (b instanceof JcrSurveyDO == false) {
             return false;
-        
-        JcrSurveyDO DO = (JcrSurveyDO)b;
-        
-        if(target == null && DO.getTarget() != null) 
+        }
+
+        JcrSurveyDO DO = (JcrSurveyDO) b;
+
+        if (target == null && DO.getTarget() != null) {
             return false;
-        
-        if(target != null && DO.getTarget() == null)
+        }
+
+        if (target != null && DO.getTarget() == null) {
             return false;
-        
-        if(target != null && target.hashCode() != DO.getTarget().hashCode())
+        }
+
+        if (target != null && target.hashCode() != DO.getTarget().hashCode()) {
             return false;
-        
+        }
+
         return hashCode() == b.hashCode();
     }
 

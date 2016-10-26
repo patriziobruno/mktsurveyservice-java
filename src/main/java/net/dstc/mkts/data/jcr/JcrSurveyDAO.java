@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 import javax.jcr.Repository;
@@ -48,10 +49,9 @@ import net.dstc.mkts.data.SurveyDAO;
  * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 @Resource
-
 @Node
 @Singleton
-public class JcrSurveyDAO implements SurveyDAO {
+public class JcrSurveyDAO implements SurveyDAO, org.glassfish.hk2.api.PreDestroy {
 
     private ObjectContentManager ocm = null;
 
@@ -80,6 +80,14 @@ public class JcrSurveyDAO implements SurveyDAO {
                 Logger.getLogger(JcrSurveyDAO.class.getName()).log(Level.SEVERE,
                         null, ex);
             }
+        }
+    }
+
+    @Override
+    @PreDestroy
+    public void preDestroy() {
+        if (ocm != null) {
+            ocm.logout();
         }
     }
 
@@ -168,6 +176,7 @@ public class JcrSurveyDAO implements SurveyDAO {
 
     @Override
     public void add(SurveyDO survey) {
+        survey.setId(getId(survey.getId()));
         ocm.insert(survey);
         ocm.save();
     }
@@ -180,12 +189,12 @@ public class JcrSurveyDAO implements SurveyDAO {
 
     @Override
     public SurveyDO get(String id) {
-        return (SurveyDO) ocm.getObject(JcrSurveyDO.class, id);
+        return (SurveyDO) ocm.getObject(JcrSurveyDO.class, getId(id));
     }
 
     @Override
     public void delete(String id) {
-        ocm.remove(id);
+        ocm.remove(getId(id));
         ocm.save();
     }
 
@@ -203,5 +212,12 @@ public class JcrSurveyDAO implements SurveyDAO {
     @Override
     public SurveyTargetDO createSurveyTarget() {
         return new JcrSurveyTargetDO();
+    }
+
+    private String getId(String id) {
+        if (StringUtils.indexOf(id, "/survey/") != 0) {
+            return "/survey/" + id;
+        }
+        return id;
     }
 }

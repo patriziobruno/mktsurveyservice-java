@@ -24,11 +24,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Parameter;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import net.dstc.mkts.data.SurveyDO;
@@ -53,19 +53,6 @@ public class JpaSurveyDAO implements SurveyDAO {
     private final EntityManager entityManager = emf.createEntityManager();
 
     public JpaSurveyDAO() {
-//        SurveyDO survey = createSurvey();
-//        SurveyTargetDO target = createSurveyTarget();
-//        target.setMinAge(18 + (int)(Math.round(Math.random() * 16)));
-//        target.setMaxAge(68 + (int)(Math.round(Math.random() * 16)));
-//        target.setMinIncome(28000 + (int)(Math.round(Math.random() * 16000)));
-//        target.setMaxIncome(48000 + (int)(Math.round(Math.random() * 10000)));
-//        target.setGender("F");
-//        target.setCountry("ES");
-//        survey.setTarget(target);
-//        survey.setTitle("test2");
-//        survey.setStartDate(new Date());
-//        survey.setStatus(SurveyStatus.NEW);
-//        add(survey);
     }
 
     @Override
@@ -210,5 +197,10 @@ public class JpaSurveyDAO implements SurveyDAO {
     @Override
     public SurveyTargetDO createSurveyTarget() {
         return new JpaSurveyTargetDO();
+    }
+
+    @PreDestroy
+    private void shutdown() {
+        entityManager.close();
     }
 }

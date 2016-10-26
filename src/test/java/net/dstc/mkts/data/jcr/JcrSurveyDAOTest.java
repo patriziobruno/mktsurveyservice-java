@@ -18,6 +18,7 @@ package net.dstc.mkts.data.jcr;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.UUID;
 import javax.jcr.RepositoryException;
 import mockit.Mock;
 import mockit.MockUp;
@@ -87,8 +88,8 @@ public class JcrSurveyDAOTest {
     public void testAdd(@Mocked RepositoryImpl repository) {
 
         System.out.println("add");
-        SurveyDO survey = null;
         JcrSurveyDAO instance = new JcrSurveyDAO();
+        SurveyDO survey = instance.createSurvey();
         instance.add(survey);
     }
 
@@ -214,7 +215,7 @@ public class JcrSurveyDAOTest {
     public void testUpdate(@Mocked RepositoryImpl repository) {
         System.out.println("update");
         SurveyDO s = new JcrSurveyDO();
-        s.setId("/survey/1");
+        s.setId("/survey/" + UUID.randomUUID());
         JcrSurveyDAO instance = new JcrSurveyDAO();
         instance.update(s);
     }

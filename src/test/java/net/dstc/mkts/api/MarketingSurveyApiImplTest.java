@@ -18,6 +18,7 @@ package net.dstc.mkts.api;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.UUID;
 import mockit.Injectable;
 import mockit.Tested;
 import net.dstc.mkts.data.SurveyDAO;
@@ -33,28 +34,28 @@ import static org.junit.Assert.*;
  * @author eul0860
  */
 public class MarketingSurveyApiImplTest {
-    
+
     @Injectable
     private SurveyDAO dao;
-    
+
     @Tested
     private MarketingSurveyApiImpl instance;
-    
+
     public MarketingSurveyApiImplTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -89,33 +90,33 @@ public class MarketingSurveyApiImplTest {
     @Test
     public void testGet() {
         System.out.println("get");
-        String id = "/survey/1";
+        String id = "/survey/" + UUID.randomUUID().toString();
         SurveyDTO expResult = new SurveyDTO();
         SurveyDTO expResult2 = new SurveyDTO();
         assertEquals(expResult2, expResult);
         assertNotEquals(expResult, "");
-        
+
         SurveyDTO result = instance.get(id);
         assertNotEquals(null, result);
         assertNotEquals(result, null);
         assertEquals(result, result);
         assertNotEquals(expResult, result);
     }
-    
+
     @Test
     public void testSurveyDTOEquals() {
-        String id = "/survey/1";
+        String id = "/survey/" + UUID.randomUUID().toString();
         SurveyDTO survey1 = new SurveyDTO();
         SurveyDTO survey2 = new SurveyDTO();
         SurveyDTO survey3 = new SurveyDTO();
-        
+
         survey1.setId(id);
         assertNotEquals(survey1, survey3);
-        
+
         survey1.setId(survey3.getId());
         survey1.setTitle("test");
         assertNotEquals(survey1, survey3);
-        
+
         survey1.setId(survey2.getId());
         survey1.setTitle(survey2.getTitle());
         survey1.setStartDate(new Date());
@@ -124,33 +125,33 @@ public class MarketingSurveyApiImplTest {
         survey1.setTarget(new SurveyTargetDTO());
         assertNotEquals(survey2, survey1);
     }
-    
+
     @Test
     public void testSurveyTargetDTOEquals() {
         SurveyTargetDTO target1 = new SurveyTargetDTO();
         assertEquals(target1, target1);
-        
+
         SurveyTargetDTO target2 = new SurveyTargetDTO();
         assertEquals(target1, target2);
-        
+
         target2.setGender("M");
         assertNotEquals(target1, target2);
-        
+
         target2.setGender(null);
         target2.setCountry("US");
         assertNotEquals(target1, target2);
-        
+
         target2.setCountry(null);
         target2.setAgeRange(new int[]{0});
         assertNotEquals(target1, target2);
-        
+
         target2.setAgeRange(null);
         target2.setIncomeRange(new int[]{0});
         assertNotEquals(target1, target2);
-        
+
         assertNotEquals(target1, null);
         assertNotEquals(null, target2);
-        
+
         assertNotEquals(target1, "");
     }
 
@@ -196,7 +197,7 @@ public class MarketingSurveyApiImplTest {
     @Test
     public void testDelete() {
         System.out.println("delete");
-        String id = "/survey/1";
+        String id = "/survey/" + UUID.randomUUID().toString();
         instance.delete(id);
     }
 
