@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 import javax.jcr.Repository;
@@ -51,7 +50,7 @@ import net.dstc.mkts.data.SurveyDAO;
 @Resource
 @Node
 @Singleton
-public class JcrSurveyDAO implements SurveyDAO, org.glassfish.hk2.api.PreDestroy {
+public class JcrSurveyDAO implements SurveyDAO/*, org.glassfish.hk2.api.PreDestroy */{
 
     private ObjectContentManager ocm = null;
 
@@ -83,13 +82,13 @@ public class JcrSurveyDAO implements SurveyDAO, org.glassfish.hk2.api.PreDestroy
         }
     }
 
-    @Override
-    @PreDestroy
-    public void preDestroy() {
-        if (ocm != null) {
-            ocm.logout();
-        }
-    }
+//    @Override
+//    @PreDestroy
+//    public void preDestroy() {
+//        if (ocm != null) {
+//            ocm.logout();
+//        }
+//    }
 
     private Query createSearchQuery(SurveyDO query) {
         QueryManager qm = ocm.getQueryManager();
