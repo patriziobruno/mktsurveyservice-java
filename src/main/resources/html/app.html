@@ -74,6 +74,7 @@ and open the template in the editor.
                                 , maxAge = $('#maxAge').val()
                                 , minIncome = $('#minIncome').val()
                                 , maxIncome = $('#maxIncome').val()
+                                , gender = $('#gender').val()
                                 , country = $('#country').val();
 
                         if (startDate)
@@ -88,6 +89,13 @@ and open the template in the editor.
                             survey.target = {
                                 country: country
                             };
+                        }
+
+                        if (gender) {
+                            if (!survey.target) {
+                                survey.target = {};
+                            }
+                            survey.target.gender = gender;
                         }
 
                         if (minIncome && maxIncome) {
@@ -130,7 +138,7 @@ and open the template in the editor.
                 options.view = detailview;
                 options.detailFormatter = function (index, row) {
                     var value = row.target || {}
-                            , ageRange = value.ageRange && value.ageRange.length === 2 ? value.ageRange : [0, 0]
+                    , ageRange = value.ageRange && value.ageRange.length === 2 ? value.ageRange : [0, 0]
                             , incomeRange = value.incomeRange && value.incomeRange.length === 2 ? value.incomeRange : [0, 0]
                             ;
                     return '<div class="easyui-panel" title="Target"><b>age range:</b> {0}-{1} / <b>income range:</b> {2}-{3} <br/> <b>gender:</b> {4} / <b>country:</b> {5}</div>'.format(ageRange[0], ageRange[1], incomeRange[0]
@@ -166,6 +174,7 @@ and open the template in the editor.
                             , maxAge = $('#maxAge').val()
                             , minIncome = $('#minIncome').val()
                             , maxIncome = $('#maxIncome').val()
+                            , gender = $('#gender').val()
                             , country = $('#country').val();
 
                     if (title && startDate) {
@@ -181,6 +190,13 @@ and open the template in the editor.
                             survey.target = {
                                 country: country
                             };
+                        }
+
+                        if (gender) {
+                            if (!survey.target) {
+                                survey.target = {};
+                            }
+                            survey.target.gender = gender;
                         }
 
                         if (minIncome && maxIncome) {

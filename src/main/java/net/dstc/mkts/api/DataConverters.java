@@ -78,11 +78,16 @@ public class DataConverters {
             if (targetSrc != null) {
                 target = new SurveyTargetDTO() {
                     {
+                        setGender(targetSrc.getGender());
                         setCountry(targetSrc.getCountry());
-                        setAgeRange(new int[]{targetSrc.getMinAge(), targetSrc.
-                            getMaxAge()});
-                        setIncomeRange(new int[]{targetSrc.getMinIncome(),
-                            targetSrc.getMaxIncome()});
+                        setAgeRange(new int[]{
+                            targetSrc.getMinAge(),
+                             targetSrc.getMaxAge()
+                        });
+                        setIncomeRange(new int[]{
+                            targetSrc.getMinIncome(),
+                            targetSrc.getMaxIncome()
+                        });
                     }
                 };
             }
@@ -109,7 +114,7 @@ public class DataConverters {
             if (dto != null) {
                 target = data.createSurveyTarget();
                 target.setCountry(dto.getCountry());
-                target.setGender(target.getGender());
+                target.setGender(dto.getGender());
 
                 int[] ageRange = dto.getAgeRange();
                 if (ageRange != null && ageRange.length > 1) {
