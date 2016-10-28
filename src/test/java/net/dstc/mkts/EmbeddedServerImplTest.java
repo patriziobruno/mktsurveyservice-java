@@ -15,19 +15,25 @@
  */
 package net.dstc.mkts;
 
+import mockit.Mock;
+import mockit.MockUp;
+import net.dstc.mkts.config.ServerSettings;
+import net.dstc.mkts.config.ServerSettingsImpl;
+import org.eclipse.jetty.server.Server;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author eul0860
  */
-public class ServerMainImplTest {
+public class EmbeddedServerImplTest {
 
-    public ServerMainImplTest() {
+    public EmbeddedServerImplTest() {
     }
 
     @BeforeClass
@@ -47,14 +53,26 @@ public class ServerMainImplTest {
     }
 
     /**
-     * Test of run method, of class ServerMainImpl.
+     * Test of setSettings method, of class EmbeddedServerImpl.
      */
     @Test
-    public void testRun() throws Exception {
-        System.out.println("run");
-        boolean keepRunning = false;
-        ServerRunner instance = new ServerRunner(null);
-        instance.run(keepRunning);
-        instance.stop();
+    public void testSetSettings() {
+        System.out.println("setSettings");
+        ServerSettings settings = new ServerSettingsImpl();
+        EmbeddedServerImpl instance = new EmbeddedServerImpl(null, settings);
+        instance.setSettings(settings);
+        assertEquals(settings, instance.getSettings());
     }
+
+    /**
+     * Test of preDestroy method, of class EmbeddedServerImpl.
+     */
+    @Test
+    public void testPreDestroy() {
+        new MockUp<Server>() {};
+        System.out.println("preDestroy");
+        EmbeddedServerImpl instance = new EmbeddedServerImpl(null, null);
+        instance.preDestroy();
+    }
+
 }
