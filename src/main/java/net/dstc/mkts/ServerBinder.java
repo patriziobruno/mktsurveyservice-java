@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 eul0860.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +15,24 @@
  */
 package net.dstc.mkts;
 
+import net.dstc.mkts.config.ServerSettings;
+import net.dstc.mkts.config.ServerSettingsImpl;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+
 /**
  *
- * @author Patrizio Bruno <desertconsulting@gmail.com>
+ * @author eul0860
  */
-public class Main {
+public class ServerBinder extends AbstractBinder {
 
-    public static void main(final String[] args) throws Exception {
-        new ServerRunner(args).run();
+    @Override
+    protected void configure() {
+        final ServerSettings serverSettings = new ServerSettingsImpl();
+        
+        bind(serverSettings).to(ServerSettings.class);
+        bind(EmbeddedServerImpl.class).to(EmbeddedServer.class);
+
+        addActiveDescriptor(EmbeddedServerImpl.class);
     }
+
 }

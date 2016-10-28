@@ -19,14 +19,8 @@ package net.dstc.mkts;
  *
  * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
-public interface ServerMain {
+public interface EmbeddedServer {
 
-    String getContextPath();
-    void setContextPath(String path);
-    
-    int getPort();
-    void setPort(int port);
-    
     public void run() throws Exception;
     public void run(boolean join) throws Exception;
     public void stop() throws Exception;

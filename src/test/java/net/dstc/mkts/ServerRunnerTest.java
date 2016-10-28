@@ -25,9 +25,9 @@ import org.junit.Test;
  *
  * @author eul0860
  */
-public class ServerMainImplTest {
+public class ServerRunnerTest {
 
-    public ServerMainImplTest() {
+    public ServerRunnerTest() {
     }
 
     @BeforeClass

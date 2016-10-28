@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 eul0860.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.dstc.mkts;
+package net.dstc.mkts.config;
+
+import javax.annotation.Nonnull;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
 
 /**
  *
- * @author Patrizio Bruno <desertconsulting@gmail.com>
+ * @author eul0860
  */
-public class Main {
+public interface ServerSettings {
 
-    public static void main(final String[] args) throws Exception {
-        new ServerRunner(args).run();
-    }
+    String getContextPath();
+
+    void setContextPath(@Nonnull String contextPath);
+
+    int getPort();
+
+    void setPort(@DecimalMin("1024") @DecimalMax("65535") int port);
 }

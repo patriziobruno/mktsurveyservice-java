@@ -17,24 +17,42 @@ package net.dstc.mkts;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import net.dstc.mkts.config.ServerSettings;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.hk2.api.PreDestroy;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
+import org.glassfish.jersey.servlet.ServletProperties;
+import org.jvnet.hk2.annotations.Contract;
+import org.jvnet.hk2.annotations.Service;
 
 /**
  *
  * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
-public class ServerMainImpl implements ServerMain {
+@Service
+@Contract
+public class EmbeddedServerImpl implements EmbeddedServer, PreDestroy {
 
-    public static final int SERVER_PORT = 8080;
-    public static final String CONTEXT_PATH = "/api";
+    private static final Logger LOGGER = Logger.getLogger(EmbeddedServerImpl.class.getName());
 
-    private String contextPath;
-    private int port;
+    private ServerSettings settings;
 
-    private org.eclipse.jetty.server.Server jettyServer;
+    private Server jettyServer;
+
+    private final ServiceLocator serviceLocator;
+
+    @Inject
+    public EmbeddedServerImpl(ServiceLocator serviceLocator, ServerSettings settings) {
+        this.serviceLocator = serviceLocator;
+        this.settings = settings;
+    }
 
     @Override
     public void run() throws Exception {
@@ -52,18 +70,25 @@ public class ServerMainImpl implements ServerMain {
             context.setResourceBase(webDir);
             context.setContextPath("/");
 
-            jettyServer = new org.eclipse.jetty.server.Server(getPort());
+            jettyServer = new org.eclipse.jetty.server.Server(settings.getPort());
             jettyServer.setHandler(context);
 
-            ServletHolder jerseyServlet = context.addServlet(
-                    org.glassfish.jersey.servlet.ServletContainer.class,
-                    getContextPath());
+            final ServletContainer servletContainer = new ServletContainer(
+                    ResourceConfig.forApplicationClass(MktSurveyApplication.class)) {
+                @Override
+                public void init()
+                        throws ServletException {
+                    getServletContext().setAttribute(ServletProperties.SERVICE_LOCATOR, serviceLocator);
+                    super.init();
+                }
+            };
+
+            ServletHolder jerseyServlet = new ServletHolder(servletContainer);
             jerseyServlet.setInitOrder(0);
 
-            // Tells the Jersey Servlet which REST service/class to load.
-            jerseyServlet.setInitParameter("javax.ws.rs.Application",
-                    MktSurveyApplication.class.getCanonicalName());
-
+            context.getServletHandler().addServletWithMapping(
+                    jerseyServlet,
+                    settings.getContextPath());
             DefaultServlet defaultServlet = new DefaultServlet();
             ServletHolder holderPwd = new ServletHolder("default",
                     defaultServlet);
@@ -92,34 +117,27 @@ public class ServerMainImpl implements ServerMain {
                 jettyServer.stop();
             }
         } finally {
-            jettyServer.destroy();
-            jettyServer = null;
+            if (jettyServer != null) {
+                jettyServer.destroy();
+                jettyServer = null;
+            }
         }
     }
 
+    public ServerSettings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(ServerSettings settings) {
+        this.settings = settings;
+    }
+
     @Override
-    public String getContextPath() {
-        if (StringUtils.isEmpty(contextPath)) {
-            contextPath = CONTEXT_PATH + "/*";
+    public void preDestroy() {
+        try {
+            stop();
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
         }
-        return contextPath;
-    }
-
-    @Override
-    public void setContextPath(String path) {
-        contextPath = path;
-    }
-
-    @Override
-    public int getPort() {
-        if (port == 0) {
-            port = SERVER_PORT;
-        }
-        return port;
-    }
-
-    @Override
-    public void setPort(int port) {
-        this.port = port;
     }
 }

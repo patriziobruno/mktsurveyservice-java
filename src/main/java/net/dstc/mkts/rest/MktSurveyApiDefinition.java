@@ -26,7 +26,7 @@ import io.swagger.models.auth.OAuth2Definition;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.Path;
-import net.dstc.mkts.ServerMainImpl;
+import net.dstc.mkts.config.ServerSettingsImpl;
 
 /**
  *
@@ -46,8 +46,8 @@ import net.dstc.mkts.ServerMainImpl;
         produces = {"application/json"},
         schemes
         = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
-        basePath = ServerMainImpl.CONTEXT_PATH,
-        host = "localhost:" + ServerMainImpl.SERVER_PORT
+        basePath = ServerSettingsImpl.CONTEXT_PATH,
+        host = "localhost:" + ServerSettingsImpl.SERVER_PORT
 )
 @Path("")
 public class MktSurveyApiDefinition implements ReaderListener {

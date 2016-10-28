@@ -21,8 +21,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import java.io.IOException;
-import net.dstc.mkts.ServerMain;
-import net.dstc.mkts.ServerMainImpl;
+import net.dstc.mkts.EmbeddedServer;
+import net.dstc.mkts.config.ServerSettingsImpl;
 
 /**
  *
@@ -30,7 +30,7 @@ import net.dstc.mkts.ServerMainImpl;
  */
 public class MktSurveyApiDefinitionTest {
 
-    static ServerMain server;
+    static EmbeddedServer server;
 
     @BeforeClass
     public static void setUpClass() {
@@ -48,7 +48,7 @@ public class MktSurveyApiDefinitionTest {
 //                read(new ObjectMapper().readTree(swaggerJson));
         Swagger swagger = new Swagger();
         swagger.setHost("localhost:8080");
-        swagger.setBasePath(ServerMainImpl.CONTEXT_PATH);
+        swagger.setBasePath(ServerSettingsImpl.CONTEXT_PATH);
         return swagger;
     }
 

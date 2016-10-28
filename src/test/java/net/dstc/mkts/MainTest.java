@@ -25,7 +25,7 @@ import org.junit.Test;
 public class MainTest {
 
     @Mocked
-    private ServerMainImpl server;
+    private EmbeddedServerImpl server;
     
     /**
      * Test of main method, of class Main.
@@ -36,5 +36,4 @@ public class MainTest {
         String[] args = null;
         Main.main(args);
     }
-    
 }

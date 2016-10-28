@@ -27,8 +27,6 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.dstc.mkts.ServerMain;
-import net.dstc.mkts.ServerMainImpl;
 import net.dstc.mkts.api.SurveyDTO;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -37,6 +35,7 @@ import static org.hamcrest.Matchers.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import net.dstc.mkts.ServerRunner;
 
 /**
  *
@@ -44,11 +43,11 @@ import org.junit.Test;
  */
 public class RestTest {
 
-    static ServerMain server;
+    static ServerRunner server;
 
     @BeforeClass
-    public static void setUpClass() {
-        server = new ServerMainImpl();
+    public static void setUpClass() throws Exception {
+        server = new ServerRunner(null);
         try {
             server.run(false);
         } catch (Exception ex) {
