@@ -2,6 +2,7 @@
 [![license](https://img.shields.io/github/license/patriziobruno/mktsurveyservice-java.svg)](https://raw.githubusercontent.com/patriziobruno/mktsurveyservice-java/master/LICENSE)
 [![Build Status](https://travis-ci.org/patriziobruno/mktsurveyservice-java.svg?branch=master)](https://travis-ci.org/patriziobruno/mktsurveyservice-java)
 [![Coverage Status](https://coveralls.io/repos/github/patriziobruno/mktsurveyservice-java/badge.svg?branch=master)](https://coveralls.io/github/patriziobruno/mktsurveyservice-java?branch=master)
+[![Coverity Scan Build Status](https://img.shields.io/coverity/scan/10664.svg)](https://scan.coverity.com/projects/patriziobruno-mktsurveyservice-java)
 
 A Jersey REST service developed to prove my Java skills.
 It makes use of:
