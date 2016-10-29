@@ -27,9 +27,9 @@ import org.eclipse.jetty.util.StringUtil;
 
 /**
  *
- * @author eul0860
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
-public class DataConverters {
+public final class DataConverters {
 
     private static class Helper {
 
@@ -82,7 +82,7 @@ public class DataConverters {
                         setCountry(targetSrc.getCountry());
                         setAgeRange(new int[]{
                             targetSrc.getMinAge(),
-                             targetSrc.getMaxAge()
+                            targetSrc.getMaxAge()
                         });
                         setIncomeRange(new int[]{
                             targetSrc.getMinIncome(),
@@ -133,7 +133,9 @@ public class DataConverters {
 
         private String getId(String id) {
             if (id != null) {
-                Matcher m = Pattern.compile(".*([\\p{XDigit}]{8}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{12}).*").matcher(id);
+                Matcher m = Pattern.compile(
+                        ".*([\\p{XDigit}]{8}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{12}).*").
+                        matcher(id);
                 if (m.matches()) {
                     return m.group(1);
                 }
