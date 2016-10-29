@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -113,7 +114,7 @@ public class AuthEndpoint {
     public static final String INVALID_CLIENT_DESCRIPTION = "Client authentication failed (e.g., unknown client, no client authentication included, or unsupported authentication method).";
 
     @Path("token")
-    @GET
+    @POST
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public Response token(@Context HttpServletRequest request) throws OAuthSystemException {
@@ -142,7 +143,7 @@ public class AuthEndpoint {
                 }
             } else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.REFRESH_TOKEN.toString())) {
                 // refresh token is not supported in this implementation
-                buildInvalidUserPassResponse();
+                return buildInvalidUserPassResponse();
             }
 
             final String accessToken = oauthIssuerImpl.accessToken();
@@ -198,11 +199,11 @@ public class AuthEndpoint {
     }
 
     private boolean checkClientId(String clientId) {
-        return true;
+        return "test".equals(clientId);
     }
 
     private boolean checkClientSecret(String secret) {
-        return true;
+        return "test".equals(secret);
     }
 
     private boolean checkUserPass(String user, String pass) {
