@@ -116,6 +116,7 @@ public class JpaSurveyDAOTest {
         SurveyDO survey = null;
         JpaSurveyDAO instance = new JpaSurveyDAO();
         instance.add(survey);
+        instance.shutdown();
     }
 
     /**
@@ -127,6 +128,7 @@ public class JpaSurveyDAOTest {
         String id = "";
         JpaSurveyDAO instance = new JpaSurveyDAO();
         instance.delete(id);
+        instance.shutdown();
     }
 
     /**
@@ -138,6 +140,7 @@ public class JpaSurveyDAOTest {
         SurveyDO survey = null;
         JpaSurveyDAO instance = new JpaSurveyDAO();
         instance.update(survey);
+        instance.shutdown();
     }
 
     /**
@@ -151,6 +154,7 @@ public class JpaSurveyDAOTest {
         SurveyDO expResult = null;
         SurveyDO result = instance.get(id);
         assertEquals(expResult, result);
+        instance.shutdown();
     }
 
     /**
@@ -162,6 +166,7 @@ public class JpaSurveyDAOTest {
         JpaSurveyDAO instance = new JpaSurveyDAO();
         SurveyDO result = instance.createSurvey();
         assertTrue(result instanceof JpaSurveyDO);
+        instance.shutdown();
     }
 
     /**
@@ -174,6 +179,7 @@ public class JpaSurveyDAOTest {
         SurveyTargetDO expResult = new JpaSurveyTargetDO();
         SurveyTargetDO result = instance.createSurveyTarget();
         assertEquals(expResult, result);
+        instance.shutdown();
     }
 
     /**
@@ -191,6 +197,7 @@ public class JpaSurveyDAOTest {
         JpaSurveyDO survey = (JpaSurveyDO) result.toArray()[0];
         assertNull(survey.getId());
         assertEquals(survey.getTitle(), "#test");
+        instance.shutdown();
     }
 
     /**
@@ -219,6 +226,7 @@ public class JpaSurveyDAOTest {
         assertTrue(result.toArray()[0] instanceof JpaSurveyDO);
         JpaSurveyDO survey = (JpaSurveyDO) result.toArray()[0];
         assertEquals(survey.getTitle(), "#test");
+        instance.shutdown();
     }
 
     /**
@@ -240,6 +248,7 @@ public class JpaSurveyDAOTest {
         Collection<SurveyDO> expResult = Collections.emptyList();
         Collection<SurveyDO> result = instance.list(query);
         assertEquals(expResult, result);
+        instance.shutdown();
     }
     
     @Test

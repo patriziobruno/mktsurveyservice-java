@@ -16,6 +16,8 @@
 package net.dstc.mkts.rest.auth;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import mockit.Expectations;
@@ -25,7 +27,7 @@ import mockit.MockUp;
 import mockit.Mocked;
 import mockit.Tested;
 import net.dstc.mkts.api.AuthManager;
-import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
+import org.apache.oltu.oauth2.as.request.OAuthRequest;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -64,10 +66,10 @@ public class AuthEndpointTest {
 
     @Mocked
     private HttpServletRequest request;
-    
+
     @Injectable
     private AuthManager authManager;
-    
+
     @Tested
     private AuthEndpoint instance;
 
@@ -87,10 +89,10 @@ public class AuthEndpointTest {
 //
                 request.getParameter(OAuth.OAUTH_RESPONSE_TYPE);
                 returns(OAuth.OAUTH_CODE);
-                
+
                 request.getParameter(OAuth.OAUTH_CLIENT_ID);
                 returns("test");
-                
+
 //                request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
 //                returns("test");
 //                
@@ -99,17 +101,36 @@ public class AuthEndpointTest {
 //                
 //                request.getParameter(OAuth.OAUTH_GRANT_TYPE);
 //                returns (GrantType.AUTHORIZATION_CODE.toString());
-                
+
                 request.getMethod();
                 returns("GET");
-                
+
 //                request.getContentType();
 //                returns(MediaType.APPLICATION_FORM_URLENCODED);
             }
         };
 
         Response result = instance.authorize(request);
-        assertEquals("done?code=", result.getHeaderString("Location").substring(0, 10));
+        assertEquals("done?code=", result.getHeaderString("Location").substring(
+                0, 10));
+    }
+
+    /**
+     * Test of authorize method, of class AuthEndpoint.
+     */
+    @Test(expected = WebApplicationException.class)
+    public void testAuthorizeHandleOAuthProblemExceptionNoRedirectUri() throws
+            Exception {
+        System.out.println("authorize");
+        new MockUp<OAuthRequest>() {
+            @Mock
+            public void $init(HttpServletRequest request) throws
+                    OAuthSystemException, OAuthProblemException {
+                throw OAuthProblemException.error("test");
+            }
+        };
+
+        Response result = instance.authorize(request);
     }
 
     /**
@@ -118,43 +139,21 @@ public class AuthEndpointTest {
     @Test
     public void testAuthorizeHandleOAuthProblemException() throws Exception {
         System.out.println("authorize");
-//        new MockUp<OAuthAuthzRequest>() {
-//            @Mock
-//            void $init(HttpServletRequest request) throws OAuthProblemException {
-//                throw OAuthProblemException.error("test");
-//            }
-//        };
-
-        new Expectations() {
-            {
-//                request.getHeader("Authorization");
-//                returns("Bearer " + VALID_TOKEN);
-//
-                request.getParameter(OAuth.OAUTH_RESPONSE_TYPE);
-                returns(OAuth.OAUTH_CODE);
-                
-                request.getParameter(OAuth.OAUTH_CLIENT_ID);
-                returns("test");
-                
-//                request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
-//                returns("test");
-//                
-                request.getParameter(OAuth.OAUTH_REDIRECT_URI);
-                returns("done");
-//                
-//                request.getParameter(OAuth.OAUTH_GRANT_TYPE);
-//                returns (GrantType.AUTHORIZATION_CODE.toString());
-                
-                request.getMethod();
-                returns("GET");
-                
-//                request.getContentType();
-//                returns(MediaType.APPLICATION_FORM_URLENCODED);
+        new MockUp<OAuthRequest>() {
+            @Mock
+            public void $init(HttpServletRequest request) throws
+                    OAuthSystemException, OAuthProblemException {
+                OAuthProblemException exc = OAuthProblemException.error("test");
+                exc.setRedirectUri("done");
+                throw exc;
             }
         };
 
         Response result = instance.authorize(request);
-        assertEquals("done?code=", result.getHeaderString("Location").substring(0, 10));
+        assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, result.
+                getStatus());
+        assertEquals("done?error=", result.getHeaderString("Location").
+                substring(0, 11));
     }
 
     /**
@@ -173,24 +172,220 @@ public class AuthEndpointTest {
 
                 request.getParameter(OAuth.OAUTH_PASSWORD);
                 returns("test");
-                
+
                 request.getParameter(OAuth.OAUTH_CLIENT_ID);
                 returns("test");
-                
+
                 request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
                 returns("test");
-                
+
                 request.getParameter(OAuth.OAUTH_GRANT_TYPE);
-                returns (GrantType.PASSWORD.toString());
-                
+                returns(GrantType.PASSWORD.toString());
+
                 request.getMethod();
                 returns("POST");
-                
+
                 request.getContentType();
                 returns(MediaType.APPLICATION_FORM_URLENCODED);
             }
         };
         Response result = instance.token(request);
         assertEquals(200, result.getStatus());
+    }
+
+    /**
+     * Test of token method, of class AuthEndpoint.
+     */
+    @Test
+    public void testTokenInvalidUserPass() throws Exception {
+        System.out.println("token");
+        new Expectations() {
+            {
+//                request.getHeader("Authorization");
+//                returns("Bearer " + VALID_TOKEN);
+//
+                request.getParameter(OAuth.OAUTH_USERNAME);
+                returns("wronguser");
+
+                request.getParameter(OAuth.OAUTH_PASSWORD);
+                returns("wrongpass");
+
+                request.getParameter(OAuth.OAUTH_CLIENT_ID);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_GRANT_TYPE);
+                returns(GrantType.PASSWORD.toString());
+
+                request.getMethod();
+                returns("POST");
+
+                request.getContentType();
+                returns(MediaType.APPLICATION_FORM_URLENCODED);
+            }
+        };
+        Response result = instance.token(request);
+        assertEquals(400, result.getStatus());
+    }
+
+    /**
+     * Test of token method, of class AuthEndpoint.
+     */
+    @Test
+    public void testTokenTokenRefreshNotSupported() throws Exception {
+        System.out.println("token");
+        new Expectations() {
+            {
+                request.getParameter(OAuth.OAUTH_CLIENT_ID);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_REFRESH_TOKEN);
+                returns(NOT_VALID_TOKEN);
+                
+                request.getParameter(OAuth.OAUTH_GRANT_TYPE);
+                returns(GrantType.REFRESH_TOKEN.toString());
+
+                request.getMethod();
+                returns("POST");
+
+                request.getContentType();
+                returns(MediaType.APPLICATION_FORM_URLENCODED);
+            }
+        };
+        Response result = instance.token(request);
+        assertEquals(400, result.getStatus());
+    }
+
+    /**
+     * Test of token method, of class AuthEndpoint.
+     */
+    @Test
+    public void testTokenOAuthProblemException() throws Exception {
+        System.out.println("token");
+        new MockUp<OAuthRequest>() {
+            @Mock
+            public void $init(HttpServletRequest request) throws
+                    OAuthSystemException, OAuthProblemException {
+                OAuthProblemException exc = OAuthProblemException.error("test");
+                exc.setRedirectUri("done");
+                throw exc;
+            }
+        };
+
+        Response result = instance.token(request);
+        assertEquals(400, result.getStatus());
+    }
+
+    /**
+     * Test of token method, of class AuthEndpoint.
+     */
+    @Test
+    public void testTokenAuthCodeNotValid() throws Exception {
+        System.out.println("token");
+        new Expectations() {
+            {
+                request.getParameter(OAuth.OAUTH_CLIENT_ID);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_CODE);
+                returns(NOT_VALID_TOKEN);
+
+                request.getParameter(OAuth.OAUTH_GRANT_TYPE);
+                returns(GrantType.AUTHORIZATION_CODE.toString());
+
+                request.getParameter(OAuth.OAUTH_REDIRECT_URI);
+                returns("done");
+
+                request.getMethod();
+                returns("POST");
+
+                request.getContentType();
+                returns(MediaType.APPLICATION_FORM_URLENCODED);
+
+                authManager.isValidAuthCode(NOT_VALID_TOKEN);
+                returns(false);
+            }
+        };
+
+        Response result = instance.token(request);
+        assertEquals(400, result.getStatus());
+    }
+
+    /**
+     * Test of token method, of class AuthEndpoint.
+     */
+    @Test
+    public void testTokenClientIdNotValid() throws Exception {
+        System.out.println("token");
+        new Expectations() {
+            {
+                request.getParameter(OAuth.OAUTH_CLIENT_ID);
+                returns("wrongclientid");
+
+                request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_CODE);
+                returns(NOT_VALID_TOKEN);
+
+                request.getParameter(OAuth.OAUTH_GRANT_TYPE);
+                returns(GrantType.AUTHORIZATION_CODE.toString());
+
+                request.getParameter(OAuth.OAUTH_REDIRECT_URI);
+                returns("done");
+
+                request.getMethod();
+                returns("POST");
+
+                request.getContentType();
+                returns(MediaType.APPLICATION_FORM_URLENCODED);
+            }
+        };
+
+        Response result = instance.token(request);
+        assertEquals(400, result.getStatus());
+    }
+
+    /**
+     * Test of token method, of class AuthEndpoint.
+     */
+    @Test
+    public void testTokenClientSecretNotValid() throws Exception {
+        System.out.println("token");
+        new Expectations() {
+            {
+                request.getParameter(OAuth.OAUTH_CLIENT_ID);
+                returns("test");
+
+                request.getParameter(OAuth.OAUTH_CLIENT_SECRET);
+                returns("wrongclientsecret");
+
+                request.getParameter(OAuth.OAUTH_CODE);
+                returns(NOT_VALID_TOKEN);
+
+                request.getParameter(OAuth.OAUTH_GRANT_TYPE);
+                returns(GrantType.AUTHORIZATION_CODE.toString());
+
+                request.getParameter(OAuth.OAUTH_REDIRECT_URI);
+                returns("done");
+
+                request.getMethod();
+                returns("POST");
+
+                request.getContentType();
+                returns(MediaType.APPLICATION_FORM_URLENCODED);
+            }
+        };
+
+        Response result = instance.token(request);
+        assertEquals(401, result.getStatus());
     }
 }
