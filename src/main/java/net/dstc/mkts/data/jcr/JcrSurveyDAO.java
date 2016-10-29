@@ -43,6 +43,7 @@ import org.apache.jackrabbit.ocm.query.QueryManager;
 import net.dstc.mkts.data.SurveyDO;
 import net.dstc.mkts.data.SurveyTargetDO;
 import net.dstc.mkts.data.SurveyDAO;
+import org.jvnet.hk2.annotations.Service;
 
 /**
  *
@@ -51,7 +52,8 @@ import net.dstc.mkts.data.SurveyDAO;
 @Resource
 @Node
 @Singleton
-public class JcrSurveyDAO implements SurveyDAO/*, org.glassfish.hk2.api.PreDestroy */ {
+@Service
+public class JcrSurveyDAO implements SurveyDAO, org.glassfish.hk2.api.PreDestroy {
 
     private ObjectContentManager ocm = null;
 
@@ -85,7 +87,7 @@ public class JcrSurveyDAO implements SurveyDAO/*, org.glassfish.hk2.api.PreDestr
         }
     }
 
-//    @Override
+    @Override
     @PreDestroy
     public void preDestroy() {
         shutdown();
@@ -95,11 +97,8 @@ public class JcrSurveyDAO implements SurveyDAO/*, org.glassfish.hk2.api.PreDestr
     public void shutdown() {
         if (ocm != null) {
             try {
-                ocm.getSession().logout();
-            } catch (Exception ex) {
-            }
-            try {
                 ocm.logout();
+                ocm = null;
             } catch (Exception ex) {
             }
         }

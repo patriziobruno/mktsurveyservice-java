@@ -19,7 +19,3 @@ addons:
     build_command:   "mvn -DskipTests=true compile"
     branch_pattern: coverity_scan
 
-language: java
-
-jdk:
-  - oraclejdk8

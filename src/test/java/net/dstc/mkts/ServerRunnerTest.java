@@ -15,6 +15,7 @@
  */
 package net.dstc.mkts;
 
+import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
