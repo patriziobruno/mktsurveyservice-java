@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 import javax.jcr.Repository;
@@ -50,18 +51,20 @@ import net.dstc.mkts.data.SurveyDAO;
 @Resource
 @Node
 @Singleton
-public class JcrSurveyDAO implements SurveyDAO/*, org.glassfish.hk2.api.PreDestroy */{
+public class JcrSurveyDAO implements SurveyDAO/*, org.glassfish.hk2.api.PreDestroy */ {
 
     private ObjectContentManager ocm = null;
 
     public JcrSurveyDAO() {
         if (ocm == null) {
             try {
-                RepositoryConfig config = RepositoryConfig.create(SurveyDAO.class.
+                RepositoryConfig config = RepositoryConfig.create(
+                        SurveyDAO.class.
                         getClassLoader().getResourceAsStream("repository.xml"),
                         "/tmp/mktsurvey");
                 Repository rep = RepositoryImpl.create(config);
-                Session session = rep.login(new SimpleCredentials("admin", "admin".
+                Session session = rep.login(new SimpleCredentials("admin",
+                        "admin".
                         toCharArray()));
 
                 List<Class> classes = new ArrayList<>(1);
@@ -83,12 +86,24 @@ public class JcrSurveyDAO implements SurveyDAO/*, org.glassfish.hk2.api.PreDestr
     }
 
 //    @Override
-//    @PreDestroy
-//    public void preDestroy() {
-//        if (ocm != null) {
-//            ocm.logout();
-//        }
-//    }
+    @PreDestroy
+    public void preDestroy() {
+        shutdown();
+    }
+
+    @Override
+    public void shutdown() {
+        if (ocm != null) {
+            try {
+                ocm.getSession().logout();
+            } catch (Exception ex) {
+            }
+            try {
+                ocm.logout();
+            } catch (Exception ex) {
+            }
+        }
+    }
 
     private Query createSearchQuery(SurveyDO query) {
         QueryManager qm = ocm.getQueryManager();

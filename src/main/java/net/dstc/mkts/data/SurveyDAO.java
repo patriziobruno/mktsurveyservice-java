@@ -37,4 +37,5 @@ public interface SurveyDAO {
     
     SurveyTargetDO createSurveyTarget();
     
+    public void shutdown();
 }

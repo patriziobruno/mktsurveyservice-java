@@ -79,6 +79,7 @@ public class JcrSurveyDAOTest {
         };
 
         JcrSurveyDAO dao = new JcrSurveyDAO();
+        dao.shutdown();
     }
 
     /**
@@ -91,6 +92,7 @@ public class JcrSurveyDAOTest {
         JcrSurveyDAO instance = new JcrSurveyDAO();
         SurveyDO survey = instance.createSurvey();
         instance.add(survey);
+        instance.shutdown();
     }
 
     /**
@@ -104,6 +106,7 @@ public class JcrSurveyDAOTest {
         Collection<SurveyDO> expResult = Collections.emptyList();
         Collection<SurveyDO> result = instance.list(query);
         assertEquals(expResult, result);
+        instance.shutdown();
     }
 
     /**
@@ -122,6 +125,7 @@ public class JcrSurveyDAOTest {
         Collection<SurveyDO> expResult = Collections.emptyList();
         Collection<SurveyDO> result = instance.list(query);
         assertEquals(expResult, result);
+        instance.shutdown();
     }
 
     @Test
@@ -182,6 +186,7 @@ public class JcrSurveyDAOTest {
         Collection<SurveyDO> expResult = Collections.emptyList();
         Collection<SurveyDO> result = instance.list(query);
         assertEquals(expResult, result);
+        instance.shutdown();
     }
 
     /**
@@ -195,6 +200,7 @@ public class JcrSurveyDAOTest {
         SurveyDO expResult = null;
         SurveyDO result = instance.get(id);
         assertEquals(expResult, result);
+        instance.shutdown();
     }
 
     /**
@@ -206,6 +212,7 @@ public class JcrSurveyDAOTest {
         String id = "";
         JcrSurveyDAO instance = new JcrSurveyDAO();
         instance.delete(id);
+        instance.shutdown();
     }
 
     /**
@@ -218,6 +225,7 @@ public class JcrSurveyDAOTest {
         s.setId("/survey/" + UUID.randomUUID());
         JcrSurveyDAO instance = new JcrSurveyDAO();
         instance.update(s);
+        instance.shutdown();
     }
 
     /**
@@ -229,6 +237,7 @@ public class JcrSurveyDAOTest {
         JcrSurveyDAO instance = new JcrSurveyDAO();
         SurveyDO result = instance.createSurvey();
         assertTrue(result instanceof JcrSurveyDO);
+        instance.shutdown();
     }
 
     /**
@@ -241,5 +250,6 @@ public class JcrSurveyDAOTest {
         SurveyTargetDO expResult = new JcrSurveyTargetDO();
         SurveyTargetDO result = instance.createSurveyTarget();
         assertEquals(expResult, result);
+        instance.shutdown();
     }
 }

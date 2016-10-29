@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.ManagedBean;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
@@ -197,9 +198,9 @@ public class JpaSurveyDAO implements SurveyDAO {
     public SurveyTargetDO createSurveyTarget() {
         return new JpaSurveyTargetDO();
     }
-//
-//    @PreDestroy
-//    private void shutdown() {
-//        entityManager.close();
-//    }
+
+    @PreDestroy
+    public void shutdown() {
+        entityManager.close();
+    }
 }
