@@ -1,3 +1,20 @@
+env:
+  global:
+   - secure: "aNLQSjC8zZX7stJ/dR6CX4uN1+FnFMKO6taB7nEFD48TAIANhipc0GvlGq2w2/SfOtGN8GXlt9T0Dx1e1T4X2E0VuRZ+bAxvo87t/56z0XeKqbH8w7yuyLyCJCOoz+4GP8XyQh9nFPJ1Z3CCnOztC18/usV1vb01Owrwda4cY6vXDz37gu03OYnR84gz+h5BBEY5lkYVfwRPdCBNHSxKEV1moBXcfIJ6AIap7RB5WPzuUt/MUqaanXjjBUABM90RRtWTxFMMBopVA+1/V3LT+Xp8zZrHm0BLhx6hBC7oj5WNexftnXExr+oiyxn6CpjnhYLaD6ctpM3A+ENu4pY6YSmBzzUbU6ofBrHrvnpbmvMG/DHa2M/kje1Tm+egc+37Mg+cFtuQ8vbCxKOtUN3Gn78v93oM/w6pRgeR5ZzHIAaSm9IDtXi/hzmjvceW2vunsWz3xn04cIzBaz97TkB1inA7MQu/dZevgEjypjAoXZFri0oZQ0ve8/QCEGUii7TBA40jp9R7S33R4smiaY26nfBFUjsPlSq/yYtxv6mnLbJyJ1YUGEmwxb3wTbUNwnjiPWOZl2AiiBaT92Zx0Nm565G72kVENUjmNP9vM168M1/o2CZC3rKPSAG0ZK5yNyPEt/dP2tphSe9v2Mu+0Z2XD/p2ufAwxjyDYb03F0NBDVc="
+
+before_install:
+      - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "patriziobruno/mktsurveyservice-java"
+      description: "Build submitted via Travis CI"
+    notification_email: desertconsulting@gmail.com
+    build_command_prepend: "mvn clean"
+    build_command:   "mvn -DskipTests=true compile"
+    branch_pattern: coverity_scan
+
 language: java
 
 sudo: false
