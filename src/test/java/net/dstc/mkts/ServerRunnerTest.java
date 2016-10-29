@@ -15,6 +15,7 @@
  */
 package net.dstc.mkts;
 
+import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -56,5 +57,9 @@ public class ServerRunnerTest {
         ServerRunner instance = new ServerRunner(null);
         instance.run(keepRunning);
         instance.stop();
+        try {
+            new File("/tmp/mktsurvey/.lock").delete();
+        } catch (Exception ex) {
+        }
     }
 }
