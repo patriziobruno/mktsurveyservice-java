@@ -57,9 +57,5 @@ public class ServerRunnerTest {
         ServerRunner instance = new ServerRunner(null);
         instance.run(keepRunning);
         instance.stop();
-        try {
-            new File("/tmp/mktsurvey/.lock").delete();
-        } catch (Exception ex) {
-        }
     }
 }
