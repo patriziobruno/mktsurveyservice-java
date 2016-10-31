@@ -23,7 +23,6 @@ import io.swagger.annotations.Authorization;
 import java.io.IOException;
 import java.util.Collection;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -34,9 +33,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import net.dstc.mkts.api.AuthManager;
 import net.dstc.mkts.api.SurveyDTO;
 import net.dstc.mkts.api.MarketingSurveyApi;
+import net.dstc.mkts.api.auth.Protected;
 import net.dstc.mkts.rest.auth.NotAuthException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -52,24 +51,17 @@ public class MktSurveyService {
     @Inject
     private MarketingSurveyApi service;
 
-    @Inject
-    private AuthManager oAuthManager;
-
+    @GET
+    @Protected
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes(MediaType.APPLICATION_JSON)
-    @GET
     @ApiOperation(value = "List surveys", notes = "List all surveys", code = 200,
             responseContainer = "List", response = SurveyDTO.class,
             authorizations = {
                 @Authorization(value = "oauth2")})
     public Collection<SurveyDTO> getSurveys(
-            @ApiParam @QueryParam("filter") String filter,
-            @Context HttpServletRequest request,
-            @Context HttpServletResponse response
+            @ApiParam @QueryParam("filter") String filter
     ) throws NotAuthException, OAuthSystemException, IOException {
-
-        oAuthManager.assertIsValidToken(request);
-
         SurveyDTO query = null;
 
         if (!StringUtils.isEmpty(filter)) {
@@ -79,34 +71,32 @@ public class MktSurveyService {
         return service.getList(query);
     }
 
-    @Consumes(MediaType.APPLICATION_JSON)
     @PUT
+    @Protected
+    @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Update a survey", code = 200, authorizations = {
         @Authorization(value = "oauth2")})
-    public void update(SurveyDTO survey,
-            @Context HttpServletRequest request,
-            @Context HttpServletResponse response
-    ) throws NotAuthException, OAuthSystemException {
-        oAuthManager.assertIsValidToken(request);
+    public void update(SurveyDTO survey) throws NotAuthException,
+            OAuthSystemException {
 
         service.update(survey);
     }
 
-    @Consumes(MediaType.APPLICATION_JSON)
     @POST
+    @Protected
+    @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Register new survey", code = 201, authorizations = {
         @Authorization(value = "oauth2")})
     public void insert(SurveyDTO survey,
-            @Context HttpServletRequest request,
             @Context HttpServletResponse response
     ) throws NotAuthException, OAuthSystemException {
-        oAuthManager.assertIsValidToken(request);
 
         service.insert(survey);
 
         response.setStatus(HttpServletResponse.SC_CREATED);
         try {
             response.getOutputStream().close();
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
     }
 }

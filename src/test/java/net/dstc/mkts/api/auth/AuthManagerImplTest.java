@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.dstc.mkts.api;
+package net.dstc.mkts.api.auth;
 
+import net.dstc.mkts.api.auth.AuthManagerImpl;
 import javax.servlet.http.HttpServletRequest;
 import mockit.Expectations;
 import mockit.Mock;

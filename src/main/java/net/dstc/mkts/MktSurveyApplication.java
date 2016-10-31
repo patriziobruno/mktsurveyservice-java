@@ -17,6 +17,7 @@ package net.dstc.mkts;
 
 import java.io.IOException;
 import java.util.Properties;
+import net.dstc.mkts.api.auth.AuthenticationFilter;
 import net.dstc.mkts.config.ApiBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -30,7 +31,7 @@ public class MktSurveyApplication extends ResourceConfig {
         Properties props = new Properties();
         props.load(getClass().getResourceAsStream("/configuration.properties"));
         register(new ApiBinder(props));
-
+        register(AuthenticationFilter.class);
         packages(true, "net.dstc.mkts.rest",
                 "net.dstc.mkts.rest.auth",
                 "io.swagger.jaxrs.listing", "io.swagger.jaxrs.config");

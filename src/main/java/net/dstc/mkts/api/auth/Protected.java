@@ -1,5 +1,5 @@
-/* 
- * Copyright 2016 eul0860.
+/*
+ * Copyright 2016 patrizio.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.dstc.mkts.api;
+package net.dstc.mkts.api.auth;
 
-import javax.servlet.http.HttpServletRequest;
-import net.dstc.mkts.rest.auth.NotAuthException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.ws.rs.NameBinding;
 
 /**
  *
  * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
-public interface AuthManager {
-
-    void assertIsValidToken(HttpServletRequest request) throws NotAuthException, OAuthSystemException;
-
-    void addToken(String token);
-
-    void addAuthCode(String authCode);
-
-    boolean isValidAuthCode(String authCode);
-
-    boolean isValidToken(String token);
-}
+@NameBinding
+@Retention(RUNTIME)
+@Target({TYPE, METHOD})
+public @interface Protected { }
