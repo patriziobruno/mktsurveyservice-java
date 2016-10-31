@@ -23,19 +23,53 @@ import java.util.Collection;
  */
 public interface SurveyDAO {
 
+    /**
+     * Save a new survey into the storage
+     * @param survey survey to be saved
+     */
     void add(SurveyDO survey);
 
+    /**
+     * Delete a survey from the storage
+     * @param id id of the survey to be deleted
+     */
     void delete(String id);
 
+    /**
+     * Retrieve a survey from the storage
+     * @param id id of the storage to be retrieved
+     * @return 
+     */
     SurveyDO get(String id);
 
+    /**
+     * Find surveys in the storage
+     * @param query find every survey matching all the fields set into query
+     * @return a collection of surveys
+     */
     Collection<SurveyDO> list(SurveyDO query);
 
-    void update(SurveyDO s);
+    /**
+     * Modify a survey alredy saved into the storage
+     * @param survey survey to be updated, the id must match an existing survey
+     */
+    void update(SurveyDO survey);
     
+    /**
+     * Create a new instance of an object implementing {@link SurveyDO}
+     * @return a new instance of an object implementing {@link SurveyDO}
+     */
     SurveyDO createSurvey();
     
+    
+    /**
+     * Create a new instance of an object implementing {@link SurveyTargetDO}
+     * @return a new instance of an object implementing {@link SurveyTargetDO}
+     */
     SurveyTargetDO createSurveyTarget();
     
+    /**
+     * Shut down the storage backend
+     */
     public void shutdown();
 }

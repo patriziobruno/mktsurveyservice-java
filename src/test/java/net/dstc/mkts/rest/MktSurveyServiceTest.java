@@ -23,7 +23,7 @@ import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
 import mockit.Tested;
-import net.dstc.mkts.api.AuthManager;
+import net.dstc.mkts.api.auth.AuthManager;
 import net.dstc.mkts.api.MarketingSurveyApi;
 import net.dstc.mkts.api.SurveyDTO;
 import net.dstc.mkts.rest.auth.NotAuthException;
