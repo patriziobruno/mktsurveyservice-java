@@ -23,7 +23,6 @@ import io.swagger.annotations.Authorization;
 import java.io.IOException;
 import java.util.Collection;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -34,7 +33,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import net.dstc.mkts.api.auth.AuthManager;
 import net.dstc.mkts.api.SurveyDTO;
 import net.dstc.mkts.api.MarketingSurveyApi;
 import net.dstc.mkts.api.auth.Protected;
@@ -53,9 +51,6 @@ public class MktSurveyService {
     @Inject
     private MarketingSurveyApi service;
 
-    @Inject
-    private AuthManager oAuthManager;
-
     @GET
     @Protected
     @Produces({MediaType.APPLICATION_JSON})
@@ -65,9 +60,7 @@ public class MktSurveyService {
             authorizations = {
                 @Authorization(value = "oauth2")})
     public Collection<SurveyDTO> getSurveys(
-            @ApiParam @QueryParam("filter") String filter,
-            @Context HttpServletRequest request,
-            @Context HttpServletResponse response
+            @ApiParam @QueryParam("filter") String filter
     ) throws NotAuthException, OAuthSystemException, IOException {
         SurveyDTO query = null;
 
@@ -83,10 +76,8 @@ public class MktSurveyService {
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Update a survey", code = 200, authorizations = {
         @Authorization(value = "oauth2")})
-    public void update(SurveyDTO survey,
-            @Context HttpServletRequest request,
-            @Context HttpServletResponse response
-    ) throws NotAuthException, OAuthSystemException {
+    public void update(SurveyDTO survey) throws NotAuthException,
+            OAuthSystemException {
 
         service.update(survey);
     }
@@ -97,7 +88,6 @@ public class MktSurveyService {
     @ApiOperation(value = "Register new survey", code = 201, authorizations = {
         @Authorization(value = "oauth2")})
     public void insert(SurveyDTO survey,
-            @Context HttpServletRequest request,
             @Context HttpServletResponse response
     ) throws NotAuthException, OAuthSystemException {
 
@@ -106,6 +96,7 @@ public class MktSurveyService {
         response.setStatus(HttpServletResponse.SC_CREATED);
         try {
             response.getOutputStream().close();
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
     }
 }

@@ -15,6 +15,7 @@
  */
 package net.dstc.mkts.rest;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +27,6 @@ import mockit.Tested;
 import net.dstc.mkts.api.auth.AuthManager;
 import net.dstc.mkts.api.MarketingSurveyApi;
 import net.dstc.mkts.api.SurveyDTO;
-import net.dstc.mkts.rest.auth.NotAuthException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -81,10 +81,9 @@ public class MktSurveyServiceTest {
     public void testGetSurveys() throws Exception {
         System.out.println("getSurveys");
         String filter = "";
-        HttpServletRequest request = null;
         Collection<SurveyDTO> expResult = Collections.emptyList();
         Collection<SurveyDTO> result
-                = instance.getSurveys(filter, request, response);
+                = instance.getSurveys(filter);
         assertEquals(expResult, result);
     }
 
@@ -95,10 +94,9 @@ public class MktSurveyServiceTest {
     public void testGetSurveysWithQuery() throws Exception {
         System.out.println("getSurveys");
         String filter = "{\"title\":\"test\"}";
-        HttpServletRequest request = null;
         Collection<SurveyDTO> expResult = Collections.emptyList();
         Collection<SurveyDTO> result
-                = instance.getSurveys(filter, request, response);
+                = instance.getSurveys(filter);
         assertEquals(expResult, result);
     }
 
@@ -109,8 +107,7 @@ public class MktSurveyServiceTest {
     public void testUpdate() throws Exception {
         System.out.println("update");
         SurveyDTO survey = null;
-        HttpServletRequest request = null;
-        instance.update(survey, request, response);
+        instance.update(survey);
     }
 
     /**
@@ -120,23 +117,20 @@ public class MktSurveyServiceTest {
     public void testInsert() throws Exception {
         System.out.println("insert");
         SurveyDTO survey = new SurveyDTO();
-        HttpServletRequest request = null;
-        instance.insert(survey, request, response);
+        instance.insert(survey, response);
     }
 
     /**
      * Test of insert method, of class MktSurveyService.
      */
-    @Test(expected = NotAuthException.class)
-    public void testInsertNotAuthenticated() throws Exception {
-        new Expectations() {
-            {
-                authManager.assertIsValidToken(request);
-                result = new NotAuthException(anyString);
-            }
-        };
+    @Test
+    public void testInsertIntercepIOException() throws Exception {
         System.out.println("insert");
         SurveyDTO survey = new SurveyDTO();
-        instance.insert(survey, request, response);
+        new Expectations() {{
+            response.getOutputStream();
+            result = new IOException();
+        }};
+        instance.insert(survey, response);
     }
 }
