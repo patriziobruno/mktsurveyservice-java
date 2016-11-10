@@ -4,10 +4,10 @@
 [![Coverage Status](https://coveralls.io/repos/github/patriziobruno/mktsurveyservice-java/badge.svg?branch=master)](https://coveralls.io/github/patriziobruno/mktsurveyservice-java?branch=master)
 [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/10664.svg)](https://scan.coverity.com/projects/patriziobruno-mktsurveyservice-java)
 
-A Jersey REST service developed to prove my Java skills.
+A Jersey REST service developed to prove some of my Java skills.
 It makes use of:
  - Jersey for REST
- - Apacke Oltu (https://github.com/apache/oltu) for OAUTH2
+ - Apache Oltu (https://github.com/apache/oltu) for OAUTH2
  - HK2 for dependency injection
  - JCR and JPA as storage alternatives.
   - JCR storage module can be used to run the service without relying on external dependencies. The project is configured to use Apacke Jackrabbit (https://github.com/apache/jackrabbit) as JCR backend and explicitly depends on it.
