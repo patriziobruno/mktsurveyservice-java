@@ -26,8 +26,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
- * @author eul0860
+ * Tests for {@link MktSurveyApplication}
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class MktSurveyApplicationTest {
 

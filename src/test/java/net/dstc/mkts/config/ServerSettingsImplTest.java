@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author eul0860
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class ServerSettingsImplTest {
     

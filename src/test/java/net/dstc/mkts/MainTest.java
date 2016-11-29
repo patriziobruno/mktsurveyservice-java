@@ -19,8 +19,8 @@ import mockit.Mocked;
 import org.junit.Test;
 
 /**
- *
- * @author patrizio
+ * Tests for the Main class
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class MainTest {
 

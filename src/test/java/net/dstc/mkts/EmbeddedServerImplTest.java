@@ -15,7 +15,6 @@
  */
 package net.dstc.mkts;
 
-import mockit.Mock;
 import mockit.MockUp;
 import net.dstc.mkts.config.ServerSettings;
 import net.dstc.mkts.config.ServerSettingsImpl;
@@ -28,8 +27,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
- * @author eul0860
+ * Tests for {@link EmbeddedServerImpl}
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class EmbeddedServerImplTest {
 

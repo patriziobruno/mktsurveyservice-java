@@ -39,7 +39,7 @@
 //
 ///**
 // *
-// * @author patrizio
+// * @author Patrizio Bruno <desertconsulting@gmail.com>
 // */
 //public class RestTest {
 //

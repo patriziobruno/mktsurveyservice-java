@@ -26,7 +26,7 @@ import net.dstc.mkts.config.ServerSettingsImpl;
 
 /**
  *
- * @author patrizio
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class MktSurveyApiDefinitionTest {
 

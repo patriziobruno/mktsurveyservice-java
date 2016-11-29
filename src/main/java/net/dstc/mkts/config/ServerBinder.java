@@ -20,8 +20,9 @@ import net.dstc.mkts.EmbeddedServerImpl;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 /**
- *
- * @author eul0860
+ * Configures bindings for {@link ServerSettings} and {@link EmbeddedServer}
+ * 
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class ServerBinder extends AbstractBinder {
 

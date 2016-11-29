@@ -20,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import mockit.Expectations;
 import mockit.Injectable;
-import mockit.Mock;
-import mockit.MockUp;
 import mockit.Mocked;
 import mockit.Tested;
 import net.dstc.mkts.rest.auth.NotAuthException;
@@ -31,11 +29,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
- * @author patrizio
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class AuthenticationFilterTest {
 

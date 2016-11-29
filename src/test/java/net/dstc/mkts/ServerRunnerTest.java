@@ -15,7 +15,6 @@
  */
 package net.dstc.mkts;
 
-import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,8 +22,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
- * @author eul0860
+ * Tests for {@link ServerRunner}
+ * 
+ * @author Patrizio Bruno <desertconsulting@gmail.com>
  */
 public class ServerRunnerTest {
 
