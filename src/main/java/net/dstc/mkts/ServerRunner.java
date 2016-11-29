@@ -15,6 +15,7 @@
  */
 package net.dstc.mkts;
 
+import net.dstc.mkts.config.ServerBinder;
 import java.util.logging.Logger;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.api.ServiceLocatorFactory;

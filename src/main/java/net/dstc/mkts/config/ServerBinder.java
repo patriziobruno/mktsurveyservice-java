@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.dstc.mkts;
+package net.dstc.mkts.config;
 
-import net.dstc.mkts.config.ServerSettings;
-import net.dstc.mkts.config.ServerSettingsImpl;
+import net.dstc.mkts.EmbeddedServer;
+import net.dstc.mkts.EmbeddedServerImpl;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 /**
