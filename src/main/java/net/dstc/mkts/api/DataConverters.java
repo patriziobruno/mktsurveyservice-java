@@ -37,6 +37,9 @@ public final class DataConverters {
                 = new ConcurrentHashMap<>();
     }
 
+    private final static Pattern ID_PATTERN = Pattern.compile(
+                        ".*([\\p{XDigit}]{8}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{12}).*");
+    
     public static Converter getConverter(SurveyDAO dao) {
         Converter converter;
         Class cl = dao.getClass();
@@ -133,9 +136,7 @@ public final class DataConverters {
 
         private String getId(String id) {
             if (id != null) {
-                Matcher m = Pattern.compile(
-                        ".*([\\p{XDigit}]{8}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{4}-[\\p{XDigit}]{12}).*").
-                        matcher(id);
+                Matcher m = ID_PATTERN.matcher(id);
                 if (m.matches()) {
                     return m.group(1);
                 }
