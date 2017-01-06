@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/patriziobruno/mktsurveyservice-java/badge.svg?branch=master)](https://coveralls.io/github/patriziobruno/mktsurveyservice-java?branch=master)
 [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/10664.svg)](https://scan.coverity.com/projects/patriziobruno-mktsurveyservice-java)
 
-A Jersey REST service developed to prove some of my Java skills.
+A demo Jersey REST service developed to prove some of my Java skills.
 It makes use of:
  - Jersey for REST
  - Apache Oltu (https://github.com/apache/oltu) for OAUTH2
